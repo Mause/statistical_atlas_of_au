@@ -4,8 +4,8 @@ from collections import namedtuple
 import matplotlib.pyplot as plt
 
 import cartopy.crs as ccrs
-import cartopy.io.shapereader as shpreader
 
+from .shape import shape_from_zip
 
 name = lambda q: q.attributes['NAME_1']
 LL = namedtuple('LL', 'lat,lon')
@@ -26,11 +26,17 @@ def get_states():
             val = pickle.load(fh)
 
     except FileNotFoundError:
-        shpfile = shpreader.Reader("AUS_adm\\AUS_adm1")
-        val = list(zip(shpfile.records(), shpfile.geometries()))
+        pass
 
-        with open('geometries.pickle', 'wb') as fh:
-            pickle.dump(val, fh)
+    shpfile = shape_from_zip(
+        join(data_dir, "AUS_adm.zip"),
+        "AUS_adm1"
+    )
+
+    val = list(shpfile.records())
+
+    with open('geometries.pickle', 'wb') as fh:
+        pickle.dump(val, fh)
 
     return val
 
