@@ -5,7 +5,7 @@ import pandas
 import numpy as np
 import matplotlib.pyplot as plt
 
-from aus_map import get_map
+from ..aus_map import get_map
 
 filename = (
     'ABS_ANNUAL_ERP_LGA2014_Data_e7f16b2f-edf9-4da4-9cbc-4d2e06154315.csv'
