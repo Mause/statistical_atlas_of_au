@@ -12,28 +12,12 @@ def get_layers(service):
     return dict(zip(service.layernames, service.layers))
 
 
-LAYERS = [
-    'All_Roads',
-    'Major_Road_Network',
-    'National_Route_Number_Labels',
-    'Railway_Bridges',
-    'Railway_Crossing_Lines',
-    'Railway_Stations',
-    'Railways',
-    'Road_Bridges_and_Fords',
-    'Road_Crossing_Lines',
-    'Roads_Scale_600000_to_300000',
-    'Roads_Scale_7Million_to_600000',
-    'State_Route_Number_Labels',
-]
-
-
 def mend(env):
     env.wkid = env.spatialReference.wkid
     return env
 
 
-def get_data():
+def get_data(requested_layers):
     catalog = Catalog('http://www.ga.gov.au/gis/rest/services/')
     topography = catalog['topography']
     service = topography['Dynamic_National_Map_Transport']
@@ -41,7 +25,7 @@ def get_data():
 
     return chain.from_iterable(
         layer.QueryLayer(Geometry=mend(layer.extent))
-        for layer in (layers[layer] for layer in LAYERS)
+        for layer in (layers[layer] for layer in requested_layers)
     )
 
 
@@ -52,8 +36,9 @@ def pairs(iterator):
     return ret
 
 
-def get_paths():
-    paths = get_data()
+
+def get_paths(request_layers):
+    paths = get_data(request_layers)
     paths = map(itemgetter('geometry'), paths)
     paths = filter(lambda path: hasattr(path, 'paths'), paths)
     paths = map(attrgetter('paths'), paths)
