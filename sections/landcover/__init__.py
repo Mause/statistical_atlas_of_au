@@ -1,0 +1,4 @@
+IMAGES = [
+    # 'wheat',
+    'hay.HayImageProvider'
+]
