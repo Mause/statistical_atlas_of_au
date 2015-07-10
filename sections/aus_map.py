@@ -1,11 +1,14 @@
-import pickle
+import logging
 from collections import namedtuple
+from os.path import dirname, join, exists
+import pickle
 
+import requests
 import matplotlib.pyplot as plt
-
 import cartopy.crs as ccrs
 
 from .shape import shape_from_zip
+from .image_provider import RequiresData
 
 name = lambda q: q.attributes['NAME_1']
 LL = namedtuple('LL', 'lat,lon')
@@ -22,9 +25,13 @@ def get(key, records):
 
 
 def get_states():
+    data_dir = AusMap(None).data_dir
+
+    geometries_cache = join(data_dir, 'geometries.pickle')
+
     try:
-        with open('geometries.pickle', 'rb') as fh:
-            val = pickle.load(fh)
+        with open(geometries_cache, 'rb') as fh:
+            return pickle.load(fh)
 
     except FileNotFoundError:
         pass
@@ -36,7 +43,7 @@ def get_states():
 
     val = list(shpfile.records())
 
-    with open('geometries.pickle', 'wb') as fh:
+    with open(geometries_cache, 'wb') as fh:
         pickle.dump(val, fh)
 
     return val
@@ -64,8 +71,8 @@ def get_map():
 
     ax.add_geometries(
         [
-            state
-            for record, state in get_states()
+            record.geometry
+            for record in get_states()
             if 'island' not in name(record).lower()
         ],
         ccrs.PlateCarree(),
@@ -75,3 +82,30 @@ def get_map():
     )
 
     return ax
+
+
+class Singleton(type):
+    def __call__(cls, *args, **kw):
+        if hasattr(cls, '_instance'):
+            return cls._instance
+
+        cls._instance = cls.__new__(cls)
+        cls._instance.__init__(*args, **kw)
+
+        return cls._instance
+
+
+class AusMap(RequiresData, metaclass=Singleton):
+    def has_required_data(self):
+        return exists(join(self.data_dir, 'AUS_adm.zip'))
+
+    def obtain_data(self):
+        "http://www.gadm.org/download"
+        r = requests.get(
+            'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip'
+        )
+
+        filename = join(self.data_dir, 'AUS_adm.zip')
+
+        with open(filename, 'wb') as fh:
+            fh.write(r.content)
