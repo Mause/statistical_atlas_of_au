@@ -69,6 +69,7 @@ def get_map():
     ax.patch.set_facecolor(YELLOWED_PAPER)
     ax.set_axis_bgcolor(YELLOWED_PAPER)
 
+    logging.info('Adding states to map')
     ax.add_geometries(
         [
             record.geometry
@@ -80,6 +81,7 @@ def get_map():
         edgecolor='black',
         zorder=0
     )
+    logging.info('States added')
 
     return ax
 

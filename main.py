@@ -78,6 +78,10 @@ def load_image_providers(filter_pattern):
     if not filter_pattern:
         matcher = lambda _: True
     else:
+        logging.info(
+            "Filtering image providers by \"%s\"",
+            filter_pattern
+        )
         matcher = lambda prov: fnmatch(prov, filter_pattern)
 
     image_providers = [
