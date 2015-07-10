@@ -153,7 +153,10 @@ def build_images(image_providers):
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--filter')
+    parser.add_argument(
+        '-f', '--filter',
+        help='Unix style globbing syntax for individual image providers'
+    )
     return parser.parse_args()
 
 
