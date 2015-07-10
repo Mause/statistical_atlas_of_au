@@ -1,5 +1,6 @@
 import logging
 import pickle
+from itertools import count
 from os.path import join, exists, basename
 
 import requests
@@ -47,8 +48,6 @@ def load_from_zips(data_dir):
         for filename in FILENAMES
     ]
     logging.info('Building data frames')
-
-    from itertools import count
 
     for shape in shapes:
         length = len(shape)

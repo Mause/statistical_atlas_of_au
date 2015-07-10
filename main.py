@@ -1,6 +1,5 @@
 import sys
 from os.path import expanduser
-sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 import os
 import types
@@ -10,16 +9,17 @@ import argparse
 import importlib
 from fnmatch import fnmatch
 from os.path import join, dirname, exists, basename
+
+CACHE = 'd:\\stats_data\\cache'
+HERE = dirname(__file__)
 logging.basicConfig(level=logging.DEBUG)
+sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 import sections.aus_map
 from utils import get_name
 from sections.shape import ShapeFileNotFoundException
 
 from betamax import Betamax
-
-HERE = dirname(__file__)
-CACHE = 'd:\\stats_data\\cache'
 
 
 with Betamax.configure() as conf:
