@@ -6,7 +6,9 @@ import os
 import types
 import logging
 import pkgutil
+import argparse
 import importlib
+from fnmatch import fnmatch
 from os.path import join, dirname, exists, basename
 logging.basicConfig(level=logging.DEBUG)
 
@@ -47,7 +49,7 @@ def ensure_data(prov):
             logging.warning("Couldn't obtain data for %d", prov)
 
 
-def load_image_providers():
+def load_image_providers(filter_pattern):
     """
     Loads image providing modules in submodules of `sections`.
     Said image providers are declared in an `IMAGES` list variable on the
@@ -68,10 +70,16 @@ def load_image_providers():
         and basename(package.__file__) == '__init__.py'
     ]
 
+    if not filter_pattern:
+        matcher = lambda _: True
+    else:
+        matcher = lambda prov: fnmatch(prov, filter_pattern)
+
     image_providers = [
         (package,) + tuple(image_provider.split('.'))
         for package in top_level
         for image_provider in package.IMAGES
+        if matcher(image_provider)
     ]
 
     logging.info('Loading image providers')
@@ -87,8 +95,8 @@ def load_image_providers():
     ]
 
 
-def setup():
-    image_providers = load_image_providers()
+def setup(args):
+    image_providers = load_image_providers(args.filter)
 
     logging.info('Building directories')
     build_tree(CACHE, image_providers)
@@ -139,8 +147,16 @@ def build_images(image_providers):
             )
 
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--filter')
+    return parser.parse_args()
+
+
 def main():
-    image_providers = setup()
+    args = get_args()
+
+    image_providers = setup(args)
 
     build_images(image_providers)
 
