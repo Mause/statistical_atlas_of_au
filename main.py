@@ -46,7 +46,7 @@ def ensure_data(prov):
         assert val in {True, False}, prov  # ensure an explicit value
 
         if not val:
-            logging.warning("Couldn't obtain data for %d", prov)
+            logging.warning("Couldn't obtain data for %s", prov)
 
 
 def load_image_providers(filter_pattern):
@@ -138,12 +138,20 @@ def build_images(image_providers):
             prov.build_image(output_filename)
 
         except NotImplementedError:
-            logging.info("Can't render %s", prov.__name__)
+            try:
+                name = prov.__name__
+            except AttributeError:
+                name = prov.__class__.__name__
+            logging.info("Can't render %s", name)
 
         except ShapeFileNotFoundException:
+            try:
+                name = prov.__name__
+            except AttributeError:
+                name = prov.__class__.__name__
             logging.info(
                 "Can't render %s; couldn't access required data",
-                prov.__name__
+                name
             )
 
 
