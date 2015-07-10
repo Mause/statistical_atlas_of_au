@@ -12,6 +12,7 @@ LL = namedtuple('LL', 'lat,lon')
 
 AUS_NW = LL(111.5, -7)
 AUS_SE = LL(155, -42)
+YELLOWED_PAPER = '#F1E4BB'
 
 
 def get(key, records):
@@ -57,6 +58,10 @@ def get_map():
     # ax.background_patch.set_visible(False)
     # ax.outline_patch.set_visible(False)
 
+    ax.background_patch.set_facecolor(YELLOWED_PAPER)
+    ax.patch.set_facecolor(YELLOWED_PAPER)
+    ax.set_axis_bgcolor(YELLOWED_PAPER)
+
     ax.add_geometries(
         [
             state
@@ -64,7 +69,8 @@ def get_map():
             if 'island' not in name(record).lower()
         ],
         ccrs.PlateCarree(),
-        facecolor='LightGrey', edgecolor='black',
+        facecolor=YELLOWED_PAPER,
+        edgecolor='black',
         zorder=0
     )
 
