@@ -49,6 +49,9 @@ def ensure_data(prov):
         if not val:
             logging.warning("Couldn't obtain data for %s", get_name(prov))
 
+        return val
+    return True
+
 
 def load_image_providers(filter_pattern):
     """
@@ -114,11 +117,12 @@ def setup(args):
         for prov in image_providers
     ]
 
+    # grab the data for each image_provider.
+    # those that can't get their data, we filter out
     # from concurrent.futures import ThreadPoolExecutor
     # map = ThreadPoolExecutor(10).map
-    list(map(ensure_data, image_providers))
+    return list(filter(ensure_data, image_providers))
 
-    return image_providers
 
 from sections.shape import ShapeFileNotFoundException
 
