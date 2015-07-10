@@ -45,3 +45,10 @@ def compat_context():
     with patch('arcrest.compat.urllib2.urlopen', side_effect=side_effect):
         with Betamax(arcrest.compat.sess).use_cassette('cache'):
             yield
+
+
+def get_name(obj):
+    try:
+        return obj.__name__
+    except AttributeError:
+        return obj.__class__.__name__

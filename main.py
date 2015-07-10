@@ -13,6 +13,7 @@ from os.path import join, dirname, exists, basename
 logging.basicConfig(level=logging.DEBUG)
 
 import sections.aus_map
+from utils import get_name
 
 from betamax import Betamax
 
@@ -46,7 +47,7 @@ def ensure_data(prov):
         assert val in {True, False}, prov  # ensure an explicit value
 
         if not val:
-            logging.warning("Couldn't obtain data for %s", prov)
+            logging.warning("Couldn't obtain data for %s", get_name(prov))
 
 
 def load_image_providers(filter_pattern):
@@ -138,20 +139,12 @@ def build_images(image_providers):
             prov.build_image(output_filename)
 
         except NotImplementedError:
-            try:
-                name = prov.__name__
-            except AttributeError:
-                name = prov.__class__.__name__
-            logging.info("Can't render %s", name)
+            logging.info("Can't render %s", get_name(prov))
 
         except ShapeFileNotFoundException:
-            try:
-                name = prov.__name__
-            except AttributeError:
-                name = prov.__class__.__name__
             logging.info(
                 "Can't render %s; couldn't access required data",
-                name
+                get_name(prov)
             )
 
 
