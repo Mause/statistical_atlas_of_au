@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 import sections.aus_map
 from utils import get_name
+from sections.shape import ShapeFileNotFoundException
 
 from betamax import Betamax
 
@@ -123,8 +124,6 @@ def setup(args):
     # map = ThreadPoolExecutor(10).map
     return list(filter(ensure_data, image_providers))
 
-
-from sections.shape import ShapeFileNotFoundException
 
 
 def build_images(image_providers):
