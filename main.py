@@ -8,6 +8,8 @@ import pkgutil
 import argparse
 import importlib
 from fnmatch import fnmatch
+from operator import itemgetter
+from concurrent.futures import ThreadPoolExecutor
 from os.path import join, dirname, exists, basename
 
 CACHE = 'd:\\stats_data\\cache'
@@ -104,6 +106,18 @@ def load_image_providers(filter_pattern):
     ]
 
 
+def threaded_filter(predicate, iterable):
+    # for each item in the iterable, determine is we should keep it
+    iterable = ThreadPoolExecutor(10).map(
+        lambda thing: (predicate(thing), thing),
+        iterable
+    )
+    # filter out those we don't want to keep
+    iterable = filter(itemgetter(0), iterable)
+    # grab the actual items
+    return map(itemgetter(1), iterable)
+
+
 def setup(args):
     image_providers = load_image_providers(args.filter)
 
@@ -124,10 +138,7 @@ def setup(args):
 
     # grab the data for each image_provider.
     # those that can't get their data, we filter out
-    # from concurrent.futures import ThreadPoolExecutor
-    # map = ThreadPoolExecutor(10).map
     return list(filter(ensure_data, image_providers))
-
 
 
 def build_images(image_providers):
