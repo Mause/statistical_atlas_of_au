@@ -199,13 +199,15 @@ def parse_raster_data(filename, tile_index, bounding, header):
             yield {
                 'tile_type': RTileType,
                 'tile_data': parse_tile_data(
-                    fh.read(tile_data_length)
+                    fh.read(tile_data_length),
+                    RMin,
+                    RTileType
                 )
             }
 
 
-def parse_tile_data(data):
-    None
+def parse_tile_data(*args):
+    print(args)
 
 
 def parse_raster_statistics(filename):
