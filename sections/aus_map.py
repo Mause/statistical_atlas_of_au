@@ -99,7 +99,7 @@ class Singleton(type):
 
 class AusMap(RequiresData, metaclass=Singleton):
     def has_required_data(self):
-        return exists(join(self.data_dir, 'AUS_adm.zip'))
+        return self.data_dir_exists('AUS_adm.zip')
 
     def obtain_data(self):
         "http://www.gadm.org/download"

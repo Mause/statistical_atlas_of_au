@@ -1,4 +1,5 @@
 import inspect
+from os.path import join, exists
 
 
 def not_implemented():
@@ -26,6 +27,9 @@ class RequiresData:
 
     def obtain_data(self):
         raise not_implemented()
+
+    def data_dir_exists(self, name):
+        return exists(join(self.data_dir, name))
 
 
 class ImageProvider(RequiresData):

@@ -48,11 +48,11 @@ class TransportationImageProvider(ImageProvider):
             json.dump(data, fh)
 
     def has_required_data(self):
-        filename = join(self.data_dir, self.path)
-
-        if not exists(filename):
+        if not self.data_dir_exists(self.path):
             return False
 
+        # some extra validation
+        filename = join(self.data_dir, self.path)
         try:
             with open(filename) as fh:
                 return bool(json.load(fh))

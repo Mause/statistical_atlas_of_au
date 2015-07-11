@@ -94,8 +94,7 @@ def load_data(data_dir):
 
 class LandcoverImageProvider(ImageProvider):
     def has_required_data(self):
-        join_data_dir = lambda *args: join(self.data_dir, *args)
-        return all(map(exists, map(join_data_dir, FILENAMES)))
+        return all(map(self.data_dir_exists, FILENAMES))
 
     def obtain_data(self):
         needed = [
