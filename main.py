@@ -133,16 +133,16 @@ def setup(args):
 def build_images(image_providers):
     logging.info('Rendering images')
     for prov in image_providers:
-        logging.info('Rendering %s', prov)
+        output_filename = join(
+            'output',
+            dir_for_thing(prov),
+            '{}.png'.format(prov.__module__.split('.')[-1])
+        )
+        if exists(output_filename):
+            continue
 
         try:
-            output_filename = join(
-                'output',
-                dir_for_thing(prov),
-                '{}.png'.format(prov.__module__.split('.')[-1])
-            )
-            if exists(output_filename):
-                continue
+            logging.info('Rendering %s', prov)
             prov.build_image(output_filename)
 
         except NotImplementedError:
