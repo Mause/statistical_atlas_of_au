@@ -159,7 +159,7 @@ def build_images(image_providers):
                 logging.info('Render successful')
 
         except NotImplementedError:
-            logging.info("Can't render %s", get_name(prov))
+            logging.exception("Can't render %s", get_name(prov))
 
         except ShapeFileNotFoundException:
             logging.info(
