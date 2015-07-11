@@ -1,11 +1,13 @@
 import json
-from os.path import expanduser
+import logging
+from os.path import expanduser, join, exists
 
 import pandas
 import numpy as np
 import matplotlib.pyplot as plt
 
 from ..aus_map import get_map
+from ..image_provider import ImageProvider
 
 filename = (
     'ABS_ANNUAL_ERP_LGA2014_Data_e7f16b2f-edf9-4da4-9cbc-4d2e06154315.csv'
@@ -78,5 +80,20 @@ def main():
     print('showing \'em')
     plt.savefig('town_populations.png')
 
-if __name__ == '__main__':
-    main()
+
+class PopulationDensityImageProvider(ImageProvider):
+    """
+    Data must be obtained manually
+    """
+    def has_required_data(self):
+        return self.data_dir_exists(
+            'ABS_ANNUAL_ERP_LGA2014_Data_e7f16b2f-edf9-4da4-9cbc-4d2e06154315'
+            '.csv'
+        )
+
+    def obtain_data(self):
+        logging.info(
+            'Data for PopulationDensityImageProvider cannot be obtained '
+            'automatically'
+        )
+        return False
