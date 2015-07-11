@@ -226,22 +226,63 @@ def parse_header(filename):
         )
 
 
+class Adf:
+    def __init__(self, directory):
+        self.directory = directory
+
+    @property
+    def header(self):
+        if not hasattr(self, '_header'):
+            self._header = parse_header(join(self.directory, 'hdr.adf'))
+
+        return self._header
+
+    @property
+    def bounds(self):
+        if not hasattr(self, '_bounds'):
+            self._bounds = parse_georef_bounds(join(BASE, 'dblbnd.adf'))
+
+        return self._bounds
+
+    @property
+    def stats(self):
+        if not hasattr(self, '_stats'):
+            self._stats = parse_raster_statistics(
+                join(self.directory, 'sta.adf')
+            )
+
+        return self._stats
+
+    @property
+    def _tile_index(self):
+        if not hasattr(self, '__tile_index'):
+            self.__tile_index = list(
+                parse_tile_index(join(self.directory, 'w001001x.adf'))
+            )
+
+        return self.__tile_index
+
+    @property
+    def raster_data(self):
+        if not hasattr(self, '_raster_data'):
+            path = join(self.directory, 'w001001.adf')
+            self._raster_data = list(parse_raster_data(
+                path, self._tile_index, self.bounds, self.header
+            ))
+
+        return self._raster_data
+
+
 def main():
-    header = parse_header(join(BASE, 'hdr.adf'))
+    adf = Adf(BASE)
 
-    bounds = parse_georef_bounds(join(BASE, 'dblbnd.adf'))
-    print(bounds)
-    print(parse_raster_statistics(join(BASE, 'sta.adf')))
+    print(adf.header)
+    print(adf.bounds)
+    print(adf.stats)
 
-    tile_index = parse_tile_index(join(BASE, 'w001001x.adf'))
+    adf._tile_index
 
-    tile_index = list(tile_index)
-
-    path = join(BASE, 'w001001.adf')
-    import ipdb
-    ipdb.set_trace()
-    list(parse_raster_data(path, tile_index, bounds, header))
-
+    print(adf.raster_data)
 
 
 if __name__ == '__main__':
