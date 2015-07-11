@@ -167,6 +167,8 @@ def build_images(image_providers):
                 get_name(prov)
             )
 
+        del prov  # force cleanup
+
 
 def get_args():
     parser = argparse.ArgumentParser()
