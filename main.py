@@ -153,7 +153,7 @@ def build_images(image_providers):
             continue
 
         try:
-            logging.info('Rendering %s', prov)
+            logging.info('Rendering %s', get_name(prov))
             prov.build_image(output_filename)
             if exists(output_filename):
                 logging.info('Render successful')
@@ -168,6 +168,7 @@ def build_images(image_providers):
             )
 
         del prov  # force cleanup
+    logging.info('Done.')
 
 
 def get_args():
