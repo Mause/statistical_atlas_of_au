@@ -182,21 +182,16 @@ def parse_tile_index(filename):
 
 def get_min(fh):
     min_size = ord(fh.read(1))
-    rmin = fh.read(min_size)
 
-    if min_size == 2:
-        fmt = 'h'
+    assert min_size in {2, 4, 8}, min_size
 
-    elif min_size == 4:
-        fmt = 'i'
+    fmt = {
+        2: 'h',
+        4: 'i',
+        8: 'q'
+    }[min_size]
 
-    elif min_size == 8:
-        fmt = 'q'
-
-    else:
-        raise Exception("Invalid min_size: {}".format(min_size))
-
-    return min_size, struct.unpack('>' + fmt, rmin)[0]
+    return min_size, struct.unpack(fmt, fh.read(min_size))[0]
 
 
 def parse_raster_data(filename, tile_index, bounding, header):
