@@ -12,28 +12,12 @@ RasterStats = namedtuple('RasterStats', 'min,max,mean,stddev')
 TileIndexEntry = namedtuple('TileIndexEntry', 'offset,size')
 Header = namedtuple(
     'Header',
-    'assorted1,HCellType,CompFlag,assorted2,HPixelSizeX,HPixelSizeY,'
-    'XRef,YRef,HTilesPerRow,HTilesPerColumn,HTileXSize,Unknown,HTileYSize'
+    'HCellType,CompFlag,HPixelSizeX,HPixelSizeY,'
+    'XRef,YRef,HTilesPerRow,HTilesPerColumn,HTileXSize,HTileYSize'
 )
 
 DBLBND_FORMAT = RASTERSTATS_FORMAT = struct.Struct('>4d')
-HEADER_FORMAT = struct.Struct(
-    '>'
-    '8s'  # 8           assorted data, I don't know the purpose.
-    'i'  # 4   MSB Int32   HCellType   1 = int cover, 2 = float cover.
-    'i'  # 4   MSB Int32   CompFlag    0 = compressed, 1 = uncompressed
-    '232s'  # 232         assorted data, I don't know the purpose.
-    'd'  # 8   MSB Double  HPixelSizeX Width of a pixel in georeferenced coordinates. Generally 1.0 for ungeoreferenced rasters.
-    'd'  # 8   MSB Double  HPixelSizeY Height of a pixel in georeferenced coordinates. Generally 1.0 for ungeoreferenced rasters.
-    'd'  # 8   MSB Double  XRef    dfLLX-(nBlocksPerRow*nBlockXSize*dfCellSizeX)/2.0
-    'd'  # 8   MSB Double  YRef    dfURY-(3*nBlocksPerColumn*nBlockYSize*dfCellSizeY)/2.0
-    'i'  # 4   MSB Int32   HTilesPerRow    The width of the file in tiles (often 8 for files of less than 2K in width).
-    'i'  # 4   MSB Int32   HTilesPerColumn The height of the file in tiles. Note this may be much more than the number of tiles actually represented in the index file.
-    'i'  # 4   MSB Int32   HTileXSize  The width of a file in pixels. Normally 256.
-    'i'  # 4   MSB Int32       Unknown, usually 1.
-    'i'  # 4   MSB Int32   HTileYSize  Height of a tile in pixels, usually 4.
-)
-
+HEADER_FORMAT = struct.Struct('>8xii232xddddiii4xi')
 
 MAGICS = {
     b'\x00\x00\x27\x0A\xFF\xFF\xFC\x14',
