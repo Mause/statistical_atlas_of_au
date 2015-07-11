@@ -1,6 +1,6 @@
 import json
 import logging
-from os.path import expanduser, join, exists
+from os.path import expanduser
 
 import pandas
 import numpy as np

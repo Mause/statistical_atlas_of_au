@@ -1,6 +1,6 @@
 import os
 import json
-from os.path import join, exists
+from os.path import join
 
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
