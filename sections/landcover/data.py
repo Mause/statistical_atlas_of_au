@@ -52,14 +52,18 @@ def load_from_zips(data_dir):
     for shape in shapes:
         length = len(shape)
         logging.info('Yielding')
-        for idx, record in zip(count(), shape.records()):
-            attrs = {
-                k: v.strip() if isinstance(v, (str, bytes))
-                else v
-                for k, v in record.attributes.items()
-            }
 
-            yield dict(attrs, geom=record.geometry)
+        # stealing some logic from cartopy's shape.records()
+        field_names = [field[0] for field in shape._reader.fields[1:]]
+        geometry_factory = shape._geometry_factory
+
+        for idx, thing in zip(count(), shape._reader.iterShapeRecords()):
+            # geometry_factory is expensive, so we delay its use :P
+            yield dict(
+                zip(field_names, thing.record),
+                geom=lambda: geometry_factory(thing.shape)
+            )
+
             if idx % 1000 == 0:
                 logging.info('%d/%d -> %f', idx, length, (idx / length * 100))
         logging.info('Scary')

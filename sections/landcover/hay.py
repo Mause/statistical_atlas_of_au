@@ -21,16 +21,18 @@ class HayImageProvider(LandcoverImageProvider):
         data = list(data)
         logging.info('%d data thingies for hay', len(data))
 
-        # import IPython
-        # IPython.embed()
+        logging.info('Building geometries')
+        geoms = [
+            record['geom']()
+            for record in data
+        ]
+        logging.info('Geometries built')
 
         aus_map = get_map()
 
-
         logging.info('Adding hay data')
-
         aus_map.add_geometries(
-            [record['geom'] for record in data],
+            geoms,
             ccrs.PlateCarree(),
             alpha=0.7,
             linewidth=1,
