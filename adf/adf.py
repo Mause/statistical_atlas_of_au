@@ -185,14 +185,12 @@ def parse_raster_data(filename, tile_index, bounding, header):
     with open(filename, 'rb') as fh:
         check_header(fh)
 
-        for tile_offset, RTileSize in tile_index:
-            fh.seek(tile_offset)
-            dat = fh.read(2)
-            assert dat != b''
-            read_size = struct.unpack('>h', dat)[0]
-            assert RTileSize == read_size
+        for tile_offset, RTileSize in sorted(tile_index):
+            fh.seek(100 + tile_offset)
+            read_size = unpack(fh, '>h', 2)[0]
             if read_size == 0:
                 continue
+
             RTileType = TileType(ord(fh.read(1)))
             RMinSize, RMin = get_min(fh)
 
@@ -217,7 +215,7 @@ def parse_raster_statistics(filename):
 
 def parse_header(filename):
     with open(filename, 'rb') as fh:
-        assert struct.unpack('8s', fh.read(8))[0] == b'GRID1.2\x00'
+        assert unpack(fh, '>8s', 8)[0] == b'GRID1.2\x00'
         header = Header(*HEADER_FORMAT.unpack(fh.read()))
 
         return header._replace(
