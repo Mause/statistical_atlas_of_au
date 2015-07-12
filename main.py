@@ -141,8 +141,11 @@ def setup(args):
     return list(filter(ensure_data, image_providers))
 
 
-def build_images(image_providers):
-    logging.info('Rendering images')
+def build_images(image_providers, rerender_all=False):
+    if rerender_all:
+        logging.info('Rerendering all images')
+    else:
+        logging.info('Rendering images')
     for prov in image_providers:
         output_filename = join(
             'output',
@@ -150,7 +153,10 @@ def build_images(image_providers):
             '{}.png'.format(prov.__module__.split('.')[-1])
         )
         if exists(output_filename):
-            continue
+            if rerender_all:
+                os.unlink(output_filename)
+            else:
+                continue
 
         try:
             logging.info('Rendering %s', get_name(prov))
@@ -177,6 +183,11 @@ def get_args():
         '-f', '--filter',
         help='Unix style globbing syntax for individual image providers'
     )
+    parser.add_argument(
+        '-r', '--rerender',
+        action='store_true',
+        help='Rerender all images'
+    )
     return parser.parse_args()
 
 
@@ -185,7 +196,7 @@ def main():
 
     image_providers = setup(args)
 
-    build_images(image_providers)
+    build_images(image_providers, args.rerender)
 
 
 if __name__ == '__main__':
