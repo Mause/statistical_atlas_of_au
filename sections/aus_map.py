@@ -49,11 +49,10 @@ def get_states():
     return val
 
 
-def get_map():
+def get_map(show_world=False):
     # [0, 0, 1, 1]
     ax = plt.axes([0, 0, 1, 1], projection=ccrs.Mercator())
 
-    show_world = False
     if show_world:
         ax.set_global()
     else:
