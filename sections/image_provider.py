@@ -29,7 +29,10 @@ class RequiresData:
         raise not_implemented()
 
     def data_dir_exists(self, name):
-        return exists(join(self.data_dir, name))
+        return exists(self.data_dir_join(name))
+
+    def data_dir_join(self, name):
+        return join(self.data_dir, name)
 
 
 class ImageProvider(RequiresData):

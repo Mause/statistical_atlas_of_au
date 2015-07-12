@@ -106,7 +106,7 @@ class AusMap(RequiresData, metaclass=Singleton):
             'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip'
         )
 
-        filename = join(self.data_dir, 'AUS_adm.zip')
+        filename = self.data_dir_join('AUS_adm.zip')
 
         with open(filename, 'wb') as fh:
             fh.write(r.content)

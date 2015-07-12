@@ -100,7 +100,7 @@ class LandcoverImageProvider(ImageProvider):
         needed = [
             (url, filename)
             for url, filename in zip(DATA_URLS, FILENAMES)
-            if not exists(join(self.data_dir, filename))
+            if not self.data_dir_exists(filename)
         ]
 
         for url, filename in needed:
@@ -117,5 +117,5 @@ class LandcoverImageProvider(ImageProvider):
 
             r = requests.get(url)
 
-            with open(join(self.data_dir, filename), 'wb') as fh:
+            with open(self.data_dir_join(filename), 'wb') as fh:
                 fh.write(r.content)

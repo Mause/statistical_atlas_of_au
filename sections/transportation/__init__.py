@@ -44,7 +44,7 @@ class TransportationImageProvider(ImageProvider):
 
     def obtain_data(self):
         data = get_paths(self.layers).tolist()
-        with open(join(self.data_dir, self.path), 'w') as fh:
+        with open(self.data_dir_join(self.path), 'w') as fh:
             json.dump(data, fh)
 
     def has_required_data(self):
@@ -52,7 +52,7 @@ class TransportationImageProvider(ImageProvider):
             return False
 
         # some extra validation
-        filename = join(self.data_dir, self.path)
+        filename = self.data_dir_join(self.path)
         try:
             with open(filename) as fh:
                 return bool(json.load(fh))
@@ -61,7 +61,7 @@ class TransportationImageProvider(ImageProvider):
             return False
 
     def build_image(self, output_filename):
-        with open(join(self.data_dir, self.path)) as fh:
+        with open(self.data_dir_join(self.path)) as fh:
             paths = json.load(fh)
 
         build_from_paths(paths)
