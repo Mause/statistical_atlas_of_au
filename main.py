@@ -99,16 +99,34 @@ def load_image_providers(filter_pattern):
     ]
 
     logging.info('Loading image providers')
-    return [
-        getattr(
-            importlib.import_module(
-                '.' + submodule,
-                package.__package__
-            ),
-            classname
-        )
-        for package, submodule, classname in image_providers
-    ]
+
+
+    modules = load_submodules(image_providers)
+
+
+    for module, classname in modules:
+        try:
+            yield getattr(module, classname)
+        except AttributeError:
+            logging.error(
+                "Couldn't load class \"%s\"",
+                module.__name__ + '.' + classname
+            )
+
+
+def load_submodules(image_providers):
+    for package, submodule, classname in image_providers:
+        try:
+            yield (
+                importlib.import_module('.' + submodule, package.__package__),
+                classname
+            )
+        except ImportError:
+            logging.error(
+                "Couldn't load module \"%s\"",
+                package.__package__ + '.' + submodule
+            )
+
 
 
 def threaded_filter(predicate, iterable):
@@ -124,7 +142,7 @@ def threaded_filter(predicate, iterable):
 
 
 def setup(args):
-    image_providers = load_image_providers(args.filter)
+    image_providers = list(load_image_providers(args.filter))
 
     logging.info('Building directories')
     build_tree(CACHE, image_providers)
@@ -219,15 +237,24 @@ def get_args():
         action='store_true',
         help='Rerender all images'
     )
+    parser.add_argument(
+        '-l', '--list',
+        action='store_true',
+        help='Just list all of the available image providers'
+    )
     return parser.parse_args()
 
 
 def main():
     args = get_args()
 
-    image_providers = setup(args)
-
-    build_images(image_providers, args.rerender)
+    if args.list:
+        image_providers = load_image_providers(args.filter)
+        for ip in image_providers:
+            logging.info(' * %s', get_name(ip))
+    else:
+        image_providers = setup(args)
+        build_images(image_providers, args.rerender)
 
 
 if __name__ == '__main__':
