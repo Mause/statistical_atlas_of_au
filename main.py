@@ -3,6 +3,7 @@ import sys
 import types
 import logging
 import pkgutil
+import warnings
 import argparse
 import importlib
 from glob import iglob as glob
@@ -46,7 +47,12 @@ def ensure_data(prov):
     """
     if not prov.has_required_data() and hasattr(prov, 'obtain_data'):
         val = prov.obtain_data()
-        assert val in {True, False}, prov  # ensure an explicit value
+
+        if val not in {True, False}:
+            warnings.warn(
+                '{}.obtain_data() should return an explicit boolean value'
+                .format(get_name(prov))
+            )
 
         if not val:
             logging.warning("Couldn't obtain data for %s", get_name(prov))
