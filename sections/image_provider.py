@@ -1,3 +1,4 @@
+import json
 import inspect
 from os.path import join, exists
 
@@ -33,6 +34,11 @@ class RequiresData:
 
     def data_dir_join(self, name):
         return join(self.data_dir, name)
+
+    def save_json(self, name, data):
+        with open(self.data_dir_join(name), 'w') as fh:
+            json.dump(data, fh, indent=4)
+        return True
 
 
 class ImageProvider(RequiresData):

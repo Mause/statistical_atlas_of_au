@@ -43,9 +43,10 @@ class TransportationImageProvider(ImageProvider):
         assert hasattr(self, 'layers')
 
     def obtain_data(self):
-        data = get_paths(self.layers).tolist()
-        with open(self.data_dir_join(self.path), 'w') as fh:
-            json.dump(data, fh)
+        return self.save_json(
+            self.path,
+            get_paths(self.layers).tolist()
+        )
 
     def has_required_data(self):
         if not self.data_dir_exists(self.path):

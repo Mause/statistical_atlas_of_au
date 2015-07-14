@@ -23,7 +23,5 @@ class MedianAgeImageProvider(ImageProvider):
                 'MEASURE.MAGE'
             ]
         )
-        with open(self.data_dir_join(FILENAME), 'w') as fh:
-            json.dump(data, fh, indent=4)
 
-        return True
+        return self.save_json(FILENAME, data)
