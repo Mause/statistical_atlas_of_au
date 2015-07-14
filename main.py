@@ -1,7 +1,5 @@
-import sys
-from os.path import expanduser
-
 import os
+import sys
 import types
 import logging
 import pkgutil
@@ -11,7 +9,7 @@ from glob import iglob as glob
 from fnmatch import fnmatch
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor
-from os.path import join, dirname, exists, basename, splitext
+from os.path import join, dirname, exists, basename, splitext, expanduser
 
 CACHE = 'd:\\stats_data\\cache'
 HERE = dirname(__file__)
@@ -172,6 +170,7 @@ def build_images(image_providers, rerender_all=False):
         logging.info('Rerendering all images')
     else:
         logging.info('Rendering images')
+
     for prov in image_providers:
         output_filename = join(
             'output',

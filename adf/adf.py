@@ -5,7 +5,10 @@ from collections import namedtuple
 from os.path import join
 
 # BASE = 'D:\\stats_data\\luav4g9abl07811a07egfalb132\\prob\\p05v4_25'
-BASE = 'D:\\stats_data\\luav4g9abl07811a02egigeo___\\luav4g9abll07811a02egigeo___\\lu05v4ag'
+BASE = (
+    'D:\\stats_data\\luav4g9abl07811a02egigeo___\\'
+    'luav4g9abll07811a02egigeo___\\lu05v4ag'
+)
 
 DblBnb = namedtuple('DblBnb', 'llx,lly,urx,ury')
 RasterStats = namedtuple('RasterStats', 'min,max,mean,stddev')
