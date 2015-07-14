@@ -7,10 +7,11 @@ import logging
 import pkgutil
 import argparse
 import importlib
+from glob import iglob as glob
 from fnmatch import fnmatch
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor
-from os.path import join, dirname, exists, basename
+from os.path import join, dirname, exists, basename, splitext
 
 CACHE = 'd:\\stats_data\\cache'
 HERE = dirname(__file__)
@@ -141,6 +142,31 @@ def setup(args):
     return list(filter(ensure_data, image_providers))
 
 
+def move_old(filename):
+    def get_rest(related):
+        for rel in related:
+            try:
+                yield int(
+                    rel.split('.')[-2]
+                )
+            except ValueError:
+                pass
+
+    name, ext = splitext(filename)
+    related = max(
+        get_rest(glob(name + '*')) or [],
+        default=0
+    )
+    os.rename(
+        filename,
+        '{}.{}{}'.format(
+            name,
+            related + 1,
+            ext
+        )
+    )
+
+
 def build_images(image_providers, rerender_all=False):
     if rerender_all:
         logging.info('Rerendering all images')
@@ -154,7 +180,7 @@ def build_images(image_providers, rerender_all=False):
         )
         if exists(output_filename):
             if rerender_all:
-                os.unlink(output_filename)
+                move_old(output_filename)
             else:
                 continue
 
