@@ -1,6 +1,5 @@
 import logging
 from collections import namedtuple
-from os.path import dirname, join, exists
 import pickle
 
 import requests
@@ -25,19 +24,18 @@ def get(key, records):
 
 
 def get_states():
-    data_dir = AusMap(None).data_dir
-
-    geometries_cache = join(data_dir, 'geometries.pickle')
+    aus_map_inst = AusMap(None)
+    geometries_cache = aus_map_inst.data_dir_join('geometries.pickle')
 
     try:
         with open(geometries_cache, 'rb') as fh:
             return pickle.load(fh)
 
-    except FileNotFoundError:
+    except (FileNotFoundError, EOFError):
         pass
 
     shpfile = shape_from_zip(
-        join(data_dir, "AUS_adm.zip"),
+        aus_map_inst.data_dir_join("AUS_adm.zip"),
         "AUS_adm1"
     )
 
