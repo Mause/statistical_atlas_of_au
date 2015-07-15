@@ -6,6 +6,7 @@ import requests
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
+from . import Singleton
 from .shape import shape_from_zip
 from .image_provider import RequiresData
 

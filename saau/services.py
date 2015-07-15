@@ -1,4 +1,4 @@
-from sections import SERVICES
+from .sections import SERVICES
 
 
 class Services:

@@ -12,14 +12,17 @@ from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor
 from os.path import join, dirname, exists, basename, splitext, expanduser
 
-CACHE = 'd:\\stats_data\\cache'
+
+STATS_DATA = 'd:\\stats_data'
+CACHE = join(STATS_DATA, 'cache')
+OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
 logging.basicConfig(level=logging.DEBUG)
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
-import sections.aus_map
-from utils import get_name
-from sections.shape import ShapeFileNotFoundException
+from .sections import aus_map
+from .utils import get_name
+from .sections.shape import ShapeFileNotFoundException
 
 import matplotlib.pyplot as plt
 from betamax import Betamax
@@ -34,7 +37,7 @@ def dir_for_thing(thing):
 
     import_path = thing.__name__ if not_class else thing.__module__
 
-    return join(*import_path.split('.')[:2])
+    return join(*import_path.split('.')[:3])
 
 
 def build_tree(root, packages):
@@ -70,16 +73,23 @@ def load_image_providers(filter_pattern):
     """
 
     logging.info('Loading packages')
+
+    packages = pkgutil.walk_packages(
+        [dirname(__file__)],
+        prefix='saau.',
+        onerror=logging.error
+    )
+
     packages = [
         loader.find_module(name).load_module()
-        for loader, name, _ in pkgutil.walk_packages(['.'])
-        if name.startswith('sections.')
+        for loader, name, _ in packages
+        if name.startswith('saau.sections.')
     ]
 
     top_level = [
         package
         for package in packages
-        if package.__name__.count('.') == 1
+        if package.__name__.count('.') == 2
         and basename(package.__file__) == '__init__.py'
     ]
 
@@ -147,7 +157,7 @@ def setup(args):
 
     logging.info('Building directories')
     build_tree(CACHE, image_providers)
-    build_tree(join(HERE, 'output'), image_providers)
+    build_tree(OUTPUT, image_providers)
 
     logging.info('Downloading requisite data')
 
