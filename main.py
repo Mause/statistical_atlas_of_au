@@ -21,6 +21,7 @@ import sections.aus_map
 from utils import get_name
 from sections.shape import ShapeFileNotFoundException
 
+import matplotlib.pyplot as plt
 from betamax import Betamax
 
 
@@ -209,7 +210,13 @@ def build_images(image_providers, rerender_all=False):
 
         try:
             logging.info('Rendering %s', get_name(prov))
-            prov.build_image(output_filename)
+            fig = prov.build_image(output_filename)
+            try:
+                fig.savefig(output_filename)
+            except AttributeError:
+                fig.figure.savefig(output_filename)
+            plt.close('all')  # don't allow an old image to affect a new one
+
             if exists(output_filename):
                 logging.info('Render successful')
 
