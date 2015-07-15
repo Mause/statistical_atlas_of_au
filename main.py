@@ -100,10 +100,10 @@ def load_image_providers(filter_pattern):
 
     logging.info('Loading image providers')
 
+    yield from load_classes(load_submodules(image_providers))
 
-    modules = load_submodules(image_providers)
 
-
+def load_classes(modules):
     for module, classname in modules:
         try:
             yield getattr(module, classname)
