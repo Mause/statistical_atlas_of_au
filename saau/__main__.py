@@ -223,8 +223,9 @@ def build_images(image_providers, rerender_all=False):
                 continue
 
         try:
-            logging.info('Rendering %s', get_name(prov))
+            logging.info('Building graph for %s', get_name(prov))
             fig = prov.build_image(output_filename)
+            logging.info('Rendering %s', get_name(prov))
             try:
                 fig.savefig(output_filename)
             except AttributeError:
