@@ -212,7 +212,7 @@ def build_images(image_providers, rerender_all=False):
 
     for prov in image_providers:
         output_filename = join(
-            'output',
+            OUTPUT,
             dir_for_thing(prov),
             '{}.png'.format(prov.__module__.split('.')[-1])
         )
