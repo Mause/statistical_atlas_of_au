@@ -20,7 +20,7 @@ HERE = dirname(__file__)
 logging.basicConfig(level=logging.DEBUG)
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
-from .sections import aus_map
+from .sections import aus_map, towns
 from .utils import get_name
 from .sections.shape import ShapeFileNotFoundException
 
@@ -143,7 +143,6 @@ def load_submodules(image_providers):
             )
 
 
-
 def threaded_filter(predicate, iterable):
     # for each item in the iterable, determine is we should keep it
     iterable = ThreadPoolExecutor(10).map(
@@ -165,9 +164,14 @@ def setup(args):
 
     logging.info('Downloading requisite data')
 
+    # TODO: services architecture
     data_dir = join(CACHE, 'aus_map')
     os.makedirs(data_dir, exist_ok=True)
-    ensure_data(sections.aus_map.AusMap(data_dir))
+    assert ensure_data(aus_map.AusMap(data_dir))
+
+    data_dir = join(CACHE, 'towns')
+    os.makedirs(data_dir, exist_ok=True)
+    assert ensure_data(towns.TownsData(data_dir))
 
     image_providers = [
         prov(join(CACHE, dir_for_thing(prov)))
