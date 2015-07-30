@@ -1,6 +1,7 @@
 import logging
 import pickle
 from itertools import count
+from shutil import copyfileobj
 from os.path import join, exists, basename
 
 import requests
@@ -115,7 +116,10 @@ class LandcoverImageProvider(ImageProvider):
                     humanize.naturalsize(int(r.headers['Content-Length']))
                 )
 
-            r = requests.get(url)
+            r = requests.get(url, stream=True)
 
             with open(self.data_dir_join(filename), 'wb') as fh:
-                fh.write(r.content)
+                copyfileobj(
+                    r.raw,
+                    fh
+                )

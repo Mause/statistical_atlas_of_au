@@ -1,5 +1,6 @@
 import logging
 from collections import namedtuple
+from shutil import copyfileobj
 import pickle
 
 import requests
@@ -92,10 +93,11 @@ class AusMap(RequiresData, metaclass=Singleton):
     def obtain_data(self):
         "http://www.gadm.org/download"
         r = requests.get(
-            'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip'
+            'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip',
+            stream=True
         )
 
-        filename = self.data_dir_join('AUS_adm.zip')
+        with open(self.data_dir_join('AUS_adm.zip'), 'wb') as fh:
+            copyfileobj(r.raw, fh)
 
-        with open(filename, 'wb') as fh:
-            fh.write(r.content)
+        return True
