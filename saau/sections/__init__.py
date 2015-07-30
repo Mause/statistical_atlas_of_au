@@ -5,11 +5,17 @@ SERVICES = [
 
 
 class Singleton(type):
+    table = {}
+
     def __call__(cls, *args, **kw):
-        if hasattr(cls, '_instance'):
-            return cls._instance
+        key = cls.__module__ + '.' + cls.__name__
 
-        cls._instance = cls.__new__(cls)
-        cls._instance.__init__(*args, **kw)
+        try:
+            return Singleton.table[key]
+        except KeyError:
+            pass
 
-        return cls._instance
+        Singleton.table[key] = cls.__new__(cls)
+        Singleton.table[key].__init__(*args, **kw)
+
+        return Singleton.table[key]
