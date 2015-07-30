@@ -268,6 +268,11 @@ def get_args():
         action='store_true',
         help='Just list all of the available image providers'
     )
+    parser.add_argument(
+        '-d', '--download_data',
+        action='store_true',
+        help='Just download all the required data'
+    )
     return parser.parse_args()
 
 
@@ -278,6 +283,11 @@ def main():
         image_providers = load_image_providers(args.filter)
         for ip in image_providers:
             logging.info(' * %s', get_name(ip))
+
+    elif args.download_data:
+        logging.info('Will only download data')
+        setup(args)
+
     else:
         image_providers = setup(args)
         build_images(image_providers, args.rerender)
