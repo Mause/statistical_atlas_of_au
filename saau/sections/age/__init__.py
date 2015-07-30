@@ -3,6 +3,6 @@
 
 
 IMAGES = [
-    'detailed.DetailAgeImageProvider',
+    'detailed.DetailedAgeImageProvider',
     'median.MedianAgeImageProvider'
 ]
