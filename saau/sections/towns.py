@@ -143,7 +143,12 @@ class LocationConversion(RequiresData):
         return self.data_dir_exists(filename)
 
     def __getattribute__(self, name):
-        if '_to_' in name and not hasattr(self, name):
+        try:
+            return super().__getattribute__(name)
+        except AttributeError:
+            pass
+
+        if '_to_' in name:
             setattr(self, name, self._dynamic(name))
 
         return super().__getattribute__(name)
