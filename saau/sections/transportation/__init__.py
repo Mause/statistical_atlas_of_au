@@ -3,9 +3,9 @@ import json
 
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
-import matplotlib.pyplot as plt
 
 from ..aus_map import get_map
+from ..image_provider import ImageProvider
 from .data import get_paths
 
 
@@ -30,8 +30,6 @@ def build_from_paths(paths):
     aus_map.set_aspect(1)
 
     return aus_map
-
-from ..image_provider import ImageProvider
 
 
 class TransportationImageProvider(ImageProvider):
