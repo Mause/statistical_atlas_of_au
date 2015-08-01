@@ -4,10 +4,9 @@ import types
 import logging
 import warnings
 import argparse
-from glob import iglob as glob
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor
-from os.path import join, dirname, exists, splitext, expanduser
+from os.path import join, dirname, exists, expanduser
 
 
 STATS_DATA = 'd:\\stats_data'
@@ -18,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .sections import aus_map, towns
-from .utils import get_name
+from .utils import get_name, move_old
 from .sections.shape import ShapeFileNotFoundException
 from .loading import load_image_providers
 
@@ -106,31 +105,6 @@ def setup(args):
     # grab the data for each image_provider.
     # those that can't get their data, we filter out
     return list(filter(ensure_data, image_providers))
-
-
-def move_old(filename):
-    def get_rest(related):
-        for rel in related:
-            try:
-                yield int(
-                    rel.split('.')[-2]
-                )
-            except ValueError:
-                pass
-
-    name, ext = splitext(filename)
-    related = max(
-        get_rest(glob(name + '*')) or [],
-        default=0
-    )
-    os.rename(
-        filename,
-        '{}.{}{}'.format(
-            name,
-            related + 1,
-            ext
-        )
-    )
 
 
 def build_images(image_providers, rerender_all=False):
