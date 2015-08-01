@@ -1,7 +1,6 @@
 import logging
 
 import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
 
 from .data import LandcoverImageProvider, load_data
 from ..aus_map import get_map
@@ -43,5 +42,4 @@ class HayImageProvider(LandcoverImageProvider):
             # color='transparent'
         )
 
-        logging.info('Saving')
-        plt.savefig(output_filename)
+        return aus_map
