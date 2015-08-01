@@ -1,20 +1,22 @@
 import random
 
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 from ..image_provider import ImageProvider
 
 
-STATES = [
+STATES = np.array([
     ('Western Australia', 'WA'),
     ('South Australia', 'SA'),
     ('Tasmania', 'Tas'),
     ('New South Wales', 'NSW'),
-    ('Queensland', 'Qlds'),
+    ('Queensland', 'Qld'),
     ('Northern Territory', 'NT'),
     ('Victoria', 'Vic')
-]
+])
 
 
 RANGES = np.array([
@@ -30,50 +32,51 @@ RANGES = np.array([
 ])
 
 random.seed(200)
+sns.set_style("whitegrid")
+
+
+def generate():
+    for state in STATES[::, 1]:
+        for age in RANGES[::, 1]:
+            for gender in ['Males', 'Females']:
+                yield {
+                    'total_bill': random.randint(10, 100),
+                    'day': state,
+                    'sex': gender
+                }
 
 
 class DetailedAgeImageProvider(ImageProvider):
     has_required_data = lambda _: True
 
     def build_image(self, q):
-        fig, ax = plt.subplots(
-            nrows=2,
-            ncols=4
-        )
+        fig, ax = plt.subplots(nrows=2, ncols=1)
 
-        for idx, (state, abbr) in enumerate(STATES):
-            for gender in ['Males', 'Females']:
-                sax = ax.flat[idx]
+        data = pd.DataFrame(list(generate()))
 
-                width = np.arange(len(RANGES))
-                if gender == 'Males':
-                    width = -width
+        state_rows = [
+            ['WA', 'SA', 'Tas', 'NSW'],
+            ['Qld', 'NT', 'Vic']
+        ]
 
-                sax.set_xticks([])
-                sax.barh(
-                    [
-                        random.randint(10, 100)
-                        for _ in range(len(RANGES))
-                    ],
-                    width=width,
-                )
+        for idx, subax in enumerate(ax):
+            to_display = data[data.day.isin(state_rows[idx])]
+            sns.violinplot(
+                ax=subax,
+                x="day",
+                y="total_bill",
+                hue="sex",
+                data=to_display,
+                palette="Set2",
+                split=True,
+                scale="count"
+            )
+            subax.set_ylabel('')
+            subax.set_xlabel('')
+            subax.set_yticklabels(RANGES[::, 0][::-1])
+            subax.set_yticks(list(map(int, RANGES[::, 1][::-1])))
+            subax.legend_.remove()
 
-        for row in ax:
-            row[0].set_yticks(list(range(0, 100, 10)))
-            row[0].set_yticklabels(RANGES[::, 0], fontsize=8)
-
-            for thing in row[1:]:
-                thing.set_yticks([])
-                thing.set_yticklabels([])
-
-        for thing in ax[1][[-1, -2]]:
-            fig.delaxes(thing)
-
-        # for thing in ax[1][:-2]:
-        #     import IPython
-        #     IPython.embed()
-
-        fig.tight_layout()
-        plt.grid()
+            subax.set_ylim(0, 100)
 
         return fig
