@@ -14,6 +14,10 @@ def load_image_providers(filter_pattern):
     return load_providers(filter_pattern, 'IMAGES', 'saau.sections.')
 
 
+def load_service_providers(filter_pattern):
+    return load_providers(filter_pattern, 'SERVICES', 'saau.services.')
+
+
 def load_providers(filter_pattern, attr_name, package_name):
     logging.info('Loading packages')
 

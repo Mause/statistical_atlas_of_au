@@ -16,10 +16,10 @@ HERE = dirname(__file__)
 logging.basicConfig(level=logging.DEBUG)
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
-from .sections import aus_map, towns
+from .services import Services
 from .utils import get_name, move_old
 from .sections.shape import ShapeFileNotFoundException
-from .loading import load_image_providers
+from .loading import load_image_providers, load_service_providers
 
 import matplotlib.pyplot as plt
 from betamax import Betamax
@@ -88,17 +88,16 @@ def setup(args):
 
     logging.info('Downloading requisite data')
 
-    # TODO: services architecture
-    data_dir = join(CACHE, 'aus_map')
-    os.makedirs(data_dir, exist_ok=True)
-    assert ensure_data(aus_map.AusMap(data_dir))
+    services = list(load_service_providers(None))
+    build_tree(CACHE, services)
+    ret = list(filter(ensure_data, services))
+    if not ret:
+        logging.warning("Couldn't initialize services")
 
-    data_dir = join(CACHE, 'towns')
-    os.makedirs(data_dir, exist_ok=True)
-    assert ensure_data(towns.TownsData(data_dir))
+    services = Services(services)
 
     image_providers = [
-        prov(join(CACHE, dir_for_thing(prov)))
+        prov(join(CACHE, dir_for_thing(prov)), services)
         for prov in image_providers
     ]
 
