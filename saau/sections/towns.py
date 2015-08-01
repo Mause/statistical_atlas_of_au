@@ -1,6 +1,7 @@
 from functools import reduce
 
 import pandas
+import dill as pickle
 
 from . import Singleton
 from .aus_map import AusMap
