@@ -8,9 +8,9 @@ import pandas
 import requests
 import dill as pickle
 
-from ..sections.image_provider import RequiresData
-from ..sections.shape import shape_from_zip
-from ..sections.download import get_binary
+from ...sections.image_provider import RequiresData
+from ...sections.shape import shape_from_zip
+from ...sections.download import get_binary
 
 DYNAMIC_TABLE = {
     'STATE_NAME_2011': 'state_name',
