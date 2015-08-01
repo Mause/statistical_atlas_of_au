@@ -50,6 +50,7 @@ def ensure_data(prov):
     Given that `prov`
     """
     if not prov.has_required_data() and hasattr(prov, 'obtain_data'):
+        logging.info('Obtaining data for %s', get_name(prov))
         try:
             val = prov.obtain_data()
         except Exception as e:
