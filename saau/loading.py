@@ -11,7 +11,10 @@ def load_image_providers(filter_pattern):
     Said image providers are declared in an `IMAGES` list variable on the
     submodule of `sections`
     """
+    return load_providers(filter_pattern, 'IMAGES', 'saau.sections.')
 
+
+def load_providers(filter_pattern, attr_name, package_name):
     logging.info('Loading packages')
 
     packages = pkgutil.walk_packages(
@@ -23,7 +26,7 @@ def load_image_providers(filter_pattern):
     packages = [
         loader.find_module(name).load_module()
         for loader, name, _ in packages
-        if name.startswith('saau.sections.')
+        if name.startswith(package_name)
     ]
 
     top_level = [
@@ -37,7 +40,7 @@ def load_image_providers(filter_pattern):
         matcher = lambda _: True
     else:
         logging.info(
-            "Filtering image providers by \"%s\"",
+            "Filtering providers by \"%s\"",
             filter_pattern
         )
         matcher = lambda prov: fnmatch(prov, filter_pattern)
@@ -45,7 +48,7 @@ def load_image_providers(filter_pattern):
     image_providers = [
         (package,) + tuple(image_provider.split('.'))
         for package in top_level
-        for image_provider in package.IMAGES
+        for image_provider in getattr(package, attr_name)
         if matcher(image_provider)
     ]
 
