@@ -1,4 +1,8 @@
+import logging
+from operator import itemgetter
+
 from matplotlib.cm import get_cmap
+import matplotlib as mpl
 import cartopy.crs as ccrs
 
 from ..abs import get_generic_data, collapse_concepts
@@ -17,7 +21,7 @@ class MedianAgeImageProvider(ImageProvider):
             DATASETID,
             and_=[
                 'FREQUENCY.A',
-                'REGIONTYPE.SA3',
+                'REGIONTYPE.SA2',
                 'MEASURE.MAGE'
             ],
             or_=[
@@ -38,8 +42,6 @@ class MedianAgeImageProvider(ImageProvider):
         return self.save_json(FILENAME, data)
 
     def build_image(self, _):
-        aus_map = self.services.aus_map.get_map()
-        towns = self.services.towns.get_towns()
         colors = get_cmap('Purples')
 
         age_data = self.load_json(FILENAME)
@@ -51,19 +53,48 @@ class MedianAgeImageProvider(ImageProvider):
             for data_point in age_data['series']
         ]
 
-        __import__('ipdb').set_trace()
-        region_lookup = TownsData.instance().conv.sla_to_sla_name
+        region_lookup = lambda sa3: self.services.sa3.get(
+            'SA3_CODE11', int(sa3)
+        )
 
-        for data_point in age_data:
-            try:
-                town_name = region_lookup(data_point['REGION'])
-            except KeyError:
-                continue
-
-            aus_map.add_geometries(
-                [towns[town_name].geometry],
-                crs=ccrs.PlateCarree(),
-                color=colors(data_point['MAGE'])
+        age_data = [
+            (
+                region_lookup(data_point['REGION']),
+                int(data_point['Value'])
             )
+            for data_point in age_data
+        ]
+
+        values = list(map(itemgetter(1), age_data))
+        norm = mpl.colors.Normalize(
+            vmin=min(values),
+            vmax=max(values)
+        )
+        logging.info(
+            '%d -> %d',
+            min(values),
+            max(values)
+        )
+
+        aus_map = self.services.aus_map.get_map()
+        for shapes, mage in age_data:
+            aus_map.add_geometries(
+                [
+                    shape.geometry
+                    for shape in shapes.rec
+                    if shape.geometry
+                ],
+                crs=ccrs.PlateCarree(),
+                color=colors(norm(mage))
+            )
+
+        cax = aus_map.figure.add_axes([0.95, 0.2, 0.02, 0.6])
+        cb = mpl.colorbar.ColorbarBase(
+            cax,
+            cmap=colors,
+            norm=norm,
+            spacing='props'
+        )
+        cb.set_label('Average age')
 
         return aus_map
