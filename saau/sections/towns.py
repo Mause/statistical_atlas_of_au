@@ -154,11 +154,15 @@ class LocationConversion(RequiresData):
         return super().__getattribute__(name)
 
     def dynamic_by_name(self, ofrom_, oto_):
-        from_, to_ = DYNAMIC_TABLE_R[ofrom_], DYNAMIC_TABLE_R[oto_]
+        ref = self.load_reference()
+        try:
+            ref[ofrom_], ref[oto_]
+            from_, to_ = ofrom_, oto_
+        except KeyError:
+            from_, to_ = DYNAMIC_TABLE_R[ofrom_], DYNAMIC_TABLE_R[oto_]
 
         def wrapper(from_val):
             from_val = try_int(from_val)
-            ref = self.load_reference()
             rows = ref[ref[from_] == from_val]
             try:
                 return rows[to_].tolist()[0]
