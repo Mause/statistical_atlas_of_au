@@ -1,6 +1,5 @@
 import os
 import json
-from os.path import join
 
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
@@ -62,11 +61,8 @@ class TransportationImageProvider(ImageProvider):
             return False
 
     def build_image(self, output_filename):
-        with open(self.data_dir_join(self.path)) as fh:
-            paths = json.load(fh)
+        return build_from_paths(self.load_json(self.path))
 
-        build_from_paths(paths)
-        plt.savefig(output_filename)
 
 # 'ferrys',
 IMAGES = [
