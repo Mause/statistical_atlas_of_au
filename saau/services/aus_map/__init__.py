@@ -107,3 +107,6 @@ class AusMap(RequiresData):
             'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip',
             self.data_dir_join('AUS_adm.zip')
         )
+
+
+SERVICES = ['__init__.AusMap']

@@ -181,9 +181,8 @@ class LocationConversion(RequiresData):
 
 
 class TownsData(RequiresData):
-    def __init__(self, data_dir, services):
-        super().__init__(data_dir, services)
-        self.conv = LocationConversion(data_dir)
+    def has_required_data(self):
+        return True
 
     def has_cached(self):
         return self.data_dir_exists('towns.pickle')
@@ -211,3 +210,9 @@ class TownsData(RequiresData):
             })
 
         return self.cache(val)
+
+
+SERVICES = [
+    '__init__.TownsData',
+    '__init__.LocationConversion'
+]
