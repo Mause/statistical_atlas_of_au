@@ -1,4 +1,3 @@
-from .sections import SERVICES
 
 
 class Services:
