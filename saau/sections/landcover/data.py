@@ -97,14 +97,15 @@ class LandcoverImageProvider(ImageProvider):
     def has_required_data(self):
         return all(map(self.data_dir_exists, FILENAMES))
 
-    def obtain_data(self):
-        needed = [
+    def get_needed(self):
+        return [
             (url, filename)
             for url, filename in zip(DATA_URLS, FILENAMES)
             if not self.data_dir_exists(filename)
         ]
 
-        for url, filename in needed:
+    def obtain_data(self):
+        for url, filename in self.get_needed():
             r = requests.head(url)
 
             if 'Content-Length' in r.headers:
@@ -123,3 +124,5 @@ class LandcoverImageProvider(ImageProvider):
                     r.raw,
                     fh
                 )
+
+        return not self.get_needed()
