@@ -4,11 +4,25 @@ SERVICES = [
 ]
 
 
+def get_key(cls):
+    return cls.__module__ + '.' + cls.__name__
+
+
+def instance(cls):
+    try:
+        return Singleton.table[get_key(cls)]
+    except KeyError:
+        raise KeyError('Singleton uninitialized')
+
+
 class Singleton(type):
     table = {}
 
+    def __init__(cls, object_or_name, bases, attrs):
+        cls.instance = classmethod(instance)
+
     def __call__(cls, *args, **kw):
-        key = cls.__module__ + '.' + cls.__name__
+        key = get_key(cls)
 
         try:
             return Singleton.table[key]
