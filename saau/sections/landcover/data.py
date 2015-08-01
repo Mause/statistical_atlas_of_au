@@ -1,10 +1,7 @@
 import logging
 import pickle
 from itertools import count
-from shutil import copyfileobj
 from os.path import join, exists, basename
-
-import requests
 
 from ..image_provider import ImageProvider
 from ..shape import shape_from_zip

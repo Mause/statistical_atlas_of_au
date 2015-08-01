@@ -24,3 +24,5 @@ def get_binary(url, filename):
             r.raw,
             fh
         )
+
+    return True

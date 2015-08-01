@@ -1,15 +1,14 @@
 import logging
 from collections import namedtuple
-from shutil import copyfileobj
 import pickle
 
-import requests
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
 from . import Singleton
 from .shape import shape_from_zip
 from .image_provider import RequiresData
+from .download import get_binary
 
 name = lambda q: q.attributes['NAME_1']
 DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')
@@ -105,12 +104,7 @@ class AusMap(RequiresData, metaclass=Singleton):
 
     def obtain_data(self):
         "http://www.gadm.org/download"
-        r = requests.get(
+        return get_binary(
             'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip',
-            stream=True
+            self.data_dir_join('AUS_adm.zip')
         )
-
-        with open(self.data_dir_join('AUS_adm.zip'), 'wb') as fh:
-            copyfileobj(r.raw, fh)
-
-        return True
