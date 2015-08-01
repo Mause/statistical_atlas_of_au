@@ -53,9 +53,8 @@ class MedianAgeImageProvider(ImageProvider):
             for data_point in age_data['series']
         ]
 
-        region_lookup = TownsData.instance().sla_to_sla_name
-
         __import__('ipdb').set_trace()
+        region_lookup = TownsData.instance().conv.sla_to_sla_name
 
         for data_point in age_data:
             try:
