@@ -1,6 +1,10 @@
 from functools import reduce
+from os.path import basename, splitext
+from zipfile import ZipFile
+from io import BytesIO
 
 import pandas
+import requests
 import dill as pickle
 
 from . import Singleton
@@ -8,6 +12,15 @@ from .aus_map import AusMap
 from .image_provider import RequiresData
 from .shape import shape_from_zip
 
+DYNAMIC_TABLE = {
+    'STATE_NAME_2011': 'state_name',
+    'STATE_CODE_2011': 'state',
+    'LGA_NAME_2011': 'lga_name',
+    'LGA_CODE_2011': 'lga',
+    'SLA_NAME_2011': 'sla_name',
+    'SLA_MAINCODE_2011': 'sla'
+}
+DYNAMIC_TABLE_R = {v: k for k, v in DYNAMIC_TABLE.items()}
 
 
 def get_towns():
@@ -18,6 +31,16 @@ class DummyRecord:
     def __init__(self, attributes, geometry):
         self.attributes = attributes
         self.geometry = geometry
+
+
+def try_int(v):
+    for func in (int, float):
+        try:
+            return func(v)
+        except ValueError:
+            pass
+
+    return v
 
 
 def combine_towns(towns):
@@ -58,9 +81,76 @@ def combine_towns(towns):
     return towns
 
 
+class LocationConversion(RequiresData):
+    url = (
+        'http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/'
+        '0/5CB0F0C29CC07051CA25791F000F2D3A/'
+        '$File/12160_local_government_area_structure.zip'
+    )
+    filename = splitext(basename(url))[0] + '.csv'
+
+    def __init__(self, data_dir):
+        assert data_dir, __import__('ipdb').set_trace()
+        super().__init__(data_dir)
+
+    def load_reference(self):
+        if not hasattr(self, 'reference'):
+            import pandas
+            self.reference = pandas.read_csv(
+                self.data_dir_join(self.filename)
+            )
+        return self.reference
+
+    def has_required_data(self):
+        return self.data_dir_exists(self.filename)
+
+    def obtain_data(self):
+        r = requests.get(self.url)
+        assert r.ok, r.json()
+        content = r.content
+
+        with ZipFile(BytesIO(content)) as ziper:
+            data = ziper.read(ziper.namelist()[0])
+
+        with open(self.data_dir_join(self.filename), 'wb') as fh:
+            fh.write(data)
+
+        return self.has_required_data()
+
+    def __getattribute__(self, name):
+        if '_to_' in name and not hasattr(self, name):
+            setattr(self, name, self._dynamic(name))
+
+        return super().__getattribute__(name)
+
+    def dynamic_by_name(self, ofrom_, oto_):
+        from_, to_ = DYNAMIC_TABLE_R[ofrom_], DYNAMIC_TABLE_R[oto_]
+
+        def wrapper(from_val):
+            from_val = try_int(from_val)
+            ref = self.load_reference()
+            rows = ref[ref[from_] == from_val]
+            try:
+                return rows[to_].tolist()[0]
+            except (KeyError, IndexError):
+                raise KeyError((from_val, type(from_val))) from None
+
+        wrapper.__doc__ = '{} to {}'.format(from_, to_)
+        wrapper.__name__ = wrapper.__qualname__ = (
+            '{}_to_{}'.format(ofrom_, oto_)
+        )
+
+        return wrapper
+
+    def _dynamic(self, name):
+        from_, to_ = name.split('_to_')
+        return self.dynamic_by_name(from_, to_)
+
+
 class TownsData(RequiresData, metaclass=Singleton):
     def __init__(self, data_dir):
         super().__init__(data_dir)
+        self.conv = LocationConversion(data_dir)
 
     def has_cached(self):
         return self.data_dir_exists('towns.pickle')
