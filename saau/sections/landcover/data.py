@@ -8,6 +8,7 @@ import requests
 
 from ..image_provider import ImageProvider
 from ..shape import shape_from_zip
+from ..download import get_binary
 
 DATA_URLS = [
     "http://data.daff.gov.au/data/warehouse/lusag4l___001/SA_shape.zip",
@@ -106,23 +107,6 @@ class LandcoverImageProvider(ImageProvider):
 
     def obtain_data(self):
         for url, filename in self.get_needed():
-            r = requests.head(url)
-
-            if 'Content-Length' in r.headers:
-                import humanize
-                logging.warning(
-                    '%s is quite large at %s. '
-                    'Considering downloading it manually?',
-                    url,
-                    humanize.naturalsize(int(r.headers['Content-Length']))
-                )
-
-            r = requests.get(url, stream=True)
-
-            with open(self.data_dir_join(filename), 'wb') as fh:
-                copyfileobj(
-                    r.raw,
-                    fh
-                )
+            get_binary(url, self.data_dir_join(filename))
 
         return not self.get_needed()
