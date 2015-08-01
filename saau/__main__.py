@@ -79,6 +79,13 @@ def threaded_filter(predicate, iterable):
     return map(itemgetter(1), iterable)
 
 
+def initialize_providers(provs, services):
+    return [
+        prov(join(CACHE, dir_for_thing(prov)), services)
+        for prov in provs
+    ]
+
+
 def setup(args):
     image_providers = list(load_image_providers(args.filter))
 
@@ -86,21 +93,21 @@ def setup(args):
     build_tree(CACHE, image_providers)
     build_tree(OUTPUT, image_providers)
 
-    logging.info('Downloading requisite data')
+    logging.info('Setting up services')
+    services_container = Services()
 
+    __import__('ipdb').set_trace()
     services = list(load_service_providers(None))
+    services = initialize_providers(services, services_container)
     build_tree(CACHE, services)
     ret = list(filter(ensure_data, services))
-    if not ret:
+    services_container.inject(services)
+    if not all(ret):
         logging.warning("Couldn't initialize services")
 
-    services = Services(services)
+    image_providers = initialize_providers(image_providers, services_container)
 
-    image_providers = [
-        prov(join(CACHE, dir_for_thing(prov)), services)
-        for prov in image_providers
-    ]
-
+    logging.info('Downloading requisite data')
     # grab the data for each image_provider.
     # those that can't get their data, we filter out
     return list(filter(ensure_data, image_providers))

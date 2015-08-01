@@ -2,7 +2,7 @@ import requests
 
 from . import TransportationImageProvider
 from ..shapely_utils import boundary_to_polygon, raw_boundary_to_polygon
-from ..aus_map import AUS_NW, AUS_SE
+from ...services.aus_map import AUS_NW, AUS_SE
 from ..misc.header import render_header_to
 
 PATH = 'ferry_paths.json'

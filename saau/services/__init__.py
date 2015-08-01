@@ -1,6 +1,9 @@
 
 
 class Services:
+    def inject(self, services):
+        self.services = services
+
     def services(self):
         try:
             return self._services
@@ -14,4 +17,4 @@ class Services:
         try:
             return self.services[name]
         except KeyError:
-            raise AttributeError
+            raise AttributeError(name)

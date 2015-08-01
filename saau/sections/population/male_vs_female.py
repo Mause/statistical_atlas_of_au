@@ -11,10 +11,8 @@ import cartopy.crs as ccrs
 from matplotlib import patches as mpatches
 from matplotlib.colors import ListedColormap
 
-from ..aus_map import get_map
 from ..image_provider import ImageProvider
 from ..abs import get_generic_data, collapse_concepts
-from ..towns import get_towns, TownsData
 
 OBTAIN_URL = (
     'http://stat.abs.gov.au/'
@@ -100,7 +98,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
     def render_map(self, data, towns):
         logging.info('Building map')
 
-        aus_map = get_map()  # (zorder=10)
+        aus_map = self.services.aus_map.get_map()  # (zorder=10)
         logging.info('Map built')
 
         logging.info('Adding data for %d towns to map', len(data))
@@ -131,17 +129,18 @@ class MaleVSFemaleImageProvider(ImageProvider):
         logging.info('Data for %d towns available', len(df))
 
         logging.info('Loading towns')
-        towns = get_towns()
+        towns = self.services.towns.get_towns()
         logging.info('Towns loaded')
 
         logging.info("Classifying population data")
         data = []
 
-        td = TownsData.instance()
+        lga_to_lga_name = self.services.conv.lga_to_lga_name
+
         unlocatable = 0
         for location in df.Location.unique():
             try:
-                clean_location = td.lga_to_lga_name(
+                clean_location = lga_to_lga_name(
                     location
                 ).rpartition(' ')[0]
             except KeyError:

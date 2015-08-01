@@ -4,13 +4,12 @@ import json
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
 
-from ..aus_map import get_map
 from ..image_provider import ImageProvider
 from .data import get_paths
 
 
-def build_from_paths(paths):
-    aus_map = get_map()
+def build_from_paths(services, paths):
+    aus_map = services.aus_map.get_map()
 
     LineString = sgeom.LineString
     paths = [

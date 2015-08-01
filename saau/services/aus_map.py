@@ -5,10 +5,9 @@ import pickle
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
-from . import Singleton
-from .shape import shape_from_zip
-from .image_provider import RequiresData
-from .download import get_binary
+from ..sections.shape import shape_from_zip
+from ..sections.image_provider import RequiresData
+from ..sections.download import get_binary
 
 name = lambda q: q.attributes['NAME_1']
 DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')
@@ -98,7 +97,7 @@ def get_map(show_world=False, zorder=0):
     return ax
 
 
-class AusMap(RequiresData, metaclass=Singleton):
+class AusMap(RequiresData):
     def has_required_data(self):
         return self.data_dir_exists('AUS_adm.zip')
 

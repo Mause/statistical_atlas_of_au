@@ -8,10 +8,9 @@ import pandas
 import requests
 import dill as pickle
 
-from . import Singleton
-from .aus_map import AusMap
-from .image_provider import RequiresData
-from .shape import shape_from_zip
+from ..sections.image_provider import RequiresData
+from ..sections.shape import shape_from_zip
+from ..sections.download import get_binary
 
 DYNAMIC_TABLE = {
     'STATE_NAME_2011': 'state_name',
@@ -181,7 +180,7 @@ class LocationConversion(RequiresData):
         return self.dynamic_by_name(from_, to_)
 
 
-class TownsData(RequiresData, metaclass=Singleton):
+class TownsData(RequiresData):
     def __init__(self, data_dir):
         super().__init__(data_dir)
         self.conv = LocationConversion(data_dir)
@@ -203,7 +202,7 @@ class TownsData(RequiresData, metaclass=Singleton):
             return self.load_cached()
 
         else:
-            path = AusMap.instance().data_dir_join('AUS_adm.zip')
+            path = self.services.aus_map.data_dir_join('AUS_adm.zip')
             shire_data = shape_from_zip(path, 'AUS_adm2')
 
             val = combine_towns({

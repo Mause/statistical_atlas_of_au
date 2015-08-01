@@ -1,8 +1,6 @@
 from matplotlib.cm import get_cmap
 import cartopy.crs as ccrs
 
-from ..towns import get_towns, TownsData
-from ..aus_map import get_map
 from ..abs import get_generic_data, collapse_concepts
 from ..image_provider import ImageProvider
 
@@ -40,8 +38,8 @@ class MedianAgeImageProvider(ImageProvider):
         return self.save_json(FILENAME, data)
 
     def build_image(self, _):
-        aus_map = get_map()
-        towns = get_towns()
+        aus_map = self.services.aus_map.get_map()
+        towns = self.services.towns.get_towns()
         colors = get_cmap('Purples')
 
         age_data = self.load_json(FILENAME)

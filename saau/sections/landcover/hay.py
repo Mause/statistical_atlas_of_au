@@ -3,7 +3,6 @@ import logging
 import cartopy.crs as ccrs
 
 from .data import LandcoverImageProvider, load_data
-from ..aus_map import get_map
 
 ALUM = ['3.3.3 Hay & silage']
 
@@ -27,7 +26,7 @@ class HayImageProvider(LandcoverImageProvider):
         ]
         logging.info('Geometries built')
 
-        aus_map = get_map()
+        aus_map = self.services.aus_map.get_map()
 
         logging.info('Adding hay data')
         aus_map.add_geometries(
