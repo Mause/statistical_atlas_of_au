@@ -40,6 +40,10 @@ class RequiresData:
             json.dump(data, fh, indent=4)
         return True
 
+    def load_json(self, name):
+        with open(self.data_dir_join(name)) as fh:
+            return json.load(fh)
+
 
 class ImageProvider(RequiresData):
     def build_image(self, output_filename):
