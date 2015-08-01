@@ -48,7 +48,7 @@ def render_header_to(ax, sy, lines, sx=0.5):
 
 
 class Header:
-    __init__ = lambda self, _: None
+    __init__ = lambda self, _, a: None
     has_required_data = lambda _: True
 
     def build_image(self, _):

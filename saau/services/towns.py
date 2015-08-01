@@ -108,9 +108,9 @@ class LocationConversion(RequiresData):
         for url in urls
     ]
 
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, services):
         assert data_dir, __import__('ipdb').set_trace()
-        super().__init__(data_dir)
+        super().__init__(data_dir, services)
 
     @lru_cache()
     def load_reference(self):
@@ -181,8 +181,8 @@ class LocationConversion(RequiresData):
 
 
 class TownsData(RequiresData):
-    def __init__(self, data_dir):
-        super().__init__(data_dir)
+    def __init__(self, data_dir, services):
+        super().__init__(data_dir, services)
         self.conv = LocationConversion(data_dir)
 
     def has_cached(self):
