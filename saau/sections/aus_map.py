@@ -12,6 +12,7 @@ from .shape import shape_from_zip
 from .image_provider import RequiresData
 
 name = lambda q: q.attributes['NAME_1']
+DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')
 LL = namedtuple('LL', 'lat,lon')
 
 AUS_NW = LL(111.5, -7)
@@ -42,6 +43,14 @@ def get_states():
     )
 
     val = list(shpfile.records())
+
+    val = [
+        DummyRecord(
+            rec.attributes,
+            rec.geometry.simplify(0.5)
+        )
+        for rec in val
+    ]
 
     with open(geometries_cache, 'wb') as fh:
         pickle.dump(val, fh)
