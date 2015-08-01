@@ -18,15 +18,8 @@ AUS_SE = LL(155, -42)
 YELLOWED_PAPER = '#F1E4BB'
 
 
-def get(key, records):
-    for record in records:
-        if name(record) == key:
-            return record
-
-
-def get_states():
-    aus_map_inst = AusMap.instance()
-    geometries_cache = aus_map_inst.data_dir_join('geometries.pickle')
+def get_states(services):
+    geometries_cache = services.aus_map.data_dir_join('geometries.pickle')
 
     try:
         with open(geometries_cache, 'rb') as fh:
@@ -36,7 +29,7 @@ def get_states():
         pass
 
     shpfile = shape_from_zip(
-        aus_map_inst.data_dir_join("AUS_adm.zip"),
+        services.aus_map.data_dir_join("AUS_adm.zip"),
         "AUS_adm1"
     )
 
@@ -56,13 +49,9 @@ def get_states():
     return val
 
 
-def get_map(show_world=False, zorder=0):
-    ax = plt.axes(
-        [0, 0, 1, 1],
-        projection=ccrs.Mercator(),
-        # axisbg=YELLOWED_PAPER
-    )
-    # plt.gcf().set_size_inches(960, 730)
+def get_map(services, show_world=False, zorder=0):
+    ax = plt.axes([0, 0, 1, 1], projection=ccrs.Mercator())
+    # ax.figure.set_size_inches(50, 70)
 
     if show_world:
         ax.set_global()
@@ -83,7 +72,7 @@ def get_map(show_world=False, zorder=0):
     ax.add_geometries(
         [
             record.geometry
-            for record in get_states()
+            for record in get_states(services)
             if 'island' not in name(record).lower()
         ],
         ccrs.PlateCarree(),
@@ -98,6 +87,9 @@ def get_map(show_world=False, zorder=0):
 
 
 class AusMap(RequiresData):
+    def get_map(self, **kwargs):
+        return get_map(self.services, **kwargs)
+
     def has_required_data(self):
         return self.data_dir_exists('AUS_adm.zip')
 
