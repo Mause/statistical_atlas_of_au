@@ -83,12 +83,31 @@ def combine_towns(towns):
 
 
 class LocationConversion(RequiresData):
-    url = (
+    fmt = (
         'http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/'
-        '0/5CB0F0C29CC07051CA25791F000F2D3A/'
-        '$File/12160_local_government_area_structure.zip'
+        '0/{}/$File/{}.zip'
     )
-    filename = splitext(basename(url))[0] + '.csv'
+
+    urls = [
+        fmt.format(
+            '5CB0F0C29CC07051CA25791F000F2D3A',
+            '12160_local_government_area_structure'
+        ),
+
+        fmt.format(
+            'C468E0C71D4701D1CA257801000C6A58',
+            '1270055001_sa3_2011_aust_csv'
+        ),
+
+        fmt.format(
+            '0C1F9B2158B14477CA257801000C6A3B',
+            '1270055001_sa2_2011_aust_csv'
+        )
+    ]
+    filenames = [
+        splitext(basename(url))[0] + '.csv'
+        for url in urls
+    ]
 
     def __init__(self, data_dir):
         assert data_dir, __import__('ipdb').set_trace()
@@ -97,25 +116,31 @@ class LocationConversion(RequiresData):
     @lru_cache()
     def load_reference(self):
         import pandas
-        return pandas.read_csv(
-            self.data_dir_join(self.filename)
-        )
+        filenames = map(self.data_dir_join, self.filenames)
+        frames = map(pandas.read_csv, filenames)
+        return pandas.concat(list(frames), ignore_index=True)
 
     def has_required_data(self):
-        return self.data_dir_exists(self.filename)
+        return all(map(self.data_dir_exists, self.filenames))
 
     def obtain_data(self):
-        r = requests.get(self.url)
+        return all(
+            self.obtain_data_for_url(filename, url)
+            for filename, url in zip(self.filenames, self.urls)
+        )
+
+    def obtain_data_for_url(self, filename, url):
+        r = requests.get(url)
         assert r.ok, r.json()
         content = r.content
 
         with ZipFile(BytesIO(content)) as ziper:
             data = ziper.read(ziper.namelist()[0])
 
-        with open(self.data_dir_join(self.filename), 'wb') as fh:
+        with open(self.data_dir_join(filename), 'wb') as fh:
             fh.write(data)
 
-        return self.has_required_data()
+        return self.data_dir_exists(filename)
 
     def __getattribute__(self, name):
         if '_to_' in name and not hasattr(self, name):
