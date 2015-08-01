@@ -15,7 +15,7 @@ name = lambda q: q.attributes['NAME_1']
 DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')
 LL = namedtuple('LL', 'lat,lon')
 
-AUS_NW = LL(111.5, -7)
+AUS_NW = LL(111.5, -1)
 AUS_SE = LL(155, -42)
 YELLOWED_PAPER = '#F1E4BB'
 
