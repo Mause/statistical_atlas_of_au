@@ -40,9 +40,9 @@ class TransportationImageProvider(ImageProvider):
         super().__init__(data_dir)
 
         assert hasattr(self, 'path')
-        assert hasattr(self, 'layers')
 
     def obtain_data(self):
+        assert hasattr(self, 'layers')
         return self.save_json(
             self.path,
             get_paths(self.layers).tolist()
