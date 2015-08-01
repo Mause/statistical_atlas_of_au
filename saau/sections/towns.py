@@ -1,6 +1,7 @@
 from functools import reduce
 from os.path import basename, splitext
 from zipfile import ZipFile
+from functools import lru_cache
 from io import BytesIO
 
 import pandas
@@ -93,13 +94,12 @@ class LocationConversion(RequiresData):
         assert data_dir, __import__('ipdb').set_trace()
         super().__init__(data_dir)
 
+    @lru_cache()
     def load_reference(self):
-        if not hasattr(self, 'reference'):
-            import pandas
-            self.reference = pandas.read_csv(
-                self.data_dir_join(self.filename)
-            )
-        return self.reference
+        import pandas
+        return pandas.read_csv(
+            self.data_dir_join(self.filename)
+        )
 
     def has_required_data(self):
         return self.data_dir_exists(self.filename)
