@@ -27,7 +27,7 @@ def get(key, records):
 
 
 def get_states():
-    aus_map_inst = AusMap(None)
+    aus_map_inst = AusMap.instance()
     geometries_cache = aus_map_inst.data_dir_join('geometries.pickle')
 
     try:
@@ -58,9 +58,13 @@ def get_states():
     return val
 
 
-def get_map(show_world=False):
-    # [0, 0, 1, 1]
-    ax = plt.axes([0, 0, 1, 1], projection=ccrs.Mercator())
+def get_map(show_world=False, zorder=0):
+    ax = plt.axes(
+        [0, 0, 1, 1],
+        projection=ccrs.Mercator(),
+        # axisbg=YELLOWED_PAPER
+    )
+    # plt.gcf().set_size_inches(960, 730)
 
     if show_world:
         ax.set_global()
