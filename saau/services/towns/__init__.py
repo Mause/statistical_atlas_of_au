@@ -180,6 +180,44 @@ class LocationConversion(RequiresData):
         return self.dynamic_by_name(from_, to_)
 
 
+class SA3(RequiresData):
+    url = (
+        'http://www.abs.gov.au/ausstats/subscriber.nsf/'
+        '0/7130A5514535C5FCCA257801000D3FBD/'
+        '$File/1270055001_sa2_2011_aust_shape.zip'
+    )
+    filename = basename(url)
+
+    def has_required_data(self):
+        return self.data_dir_exists(self.filename)
+
+    def obtain_data(self):
+        return get_binary(
+            self.url,
+            self.data_dir_join(self.filename)
+        )
+
+    @lru_cache()
+    def load_reference(self):
+        shpfile = shape_from_zip(self.data_dir_join(self.filename))
+        import pandas
+        df = pandas.DataFrame([
+            dict(rec.attributes, rec=rec)
+            for rec in shpfile.records()
+        ])
+        for column in df:
+            if 'CODE' in column and column != 'GCC_CODE11':
+                df[column] = df[column].astype(int)
+        return df
+
+    def get(self, key, value):
+        """
+        For some values, will return a list that should be combined
+        """
+        ref = self.load_reference()
+        return ref[ref[key] == value]
+
+
 class TownsData(RequiresData):
     def has_required_data(self):
         return True
@@ -214,5 +252,6 @@ class TownsData(RequiresData):
 
 SERVICES = [
     '__init__.TownsData',
-    '__init__.LocationConversion'
+    '__init__.LocationConversion',
+    '__init__.SA3'
 ]
