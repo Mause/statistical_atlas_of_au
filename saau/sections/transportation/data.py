@@ -30,11 +30,22 @@ def get_data(requested_layers):
 
 
 def pairs(iterator):
+    """
+    Returns the items in the iterator pairwise, like so;
+
+    >>> list(pairs([0, 1, 2]))
+    [(0, 1), (1, 2)]
+    """
     first, second = tee(iterator)
     ret = zip(chain([None], second), first)
-    next(ret)  # kill the first half-empty pair
-    return ret
 
+    # this is a generator so that execution doesn't begin until the user
+    # starts consuming us, and so that we then don't start consuming our
+    # iterator until they ask us to
+
+    next(ret)  # kill the first half-empty pair
+
+    yield from ret
 
 
 def get_paths(request_layers):
