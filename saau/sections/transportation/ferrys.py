@@ -107,6 +107,9 @@ class FerryImageProvider(TransportationImageProvider):
         return render_header_to(
             fig,
             19.25,
-            'From SilverRails Tech',
-            'Ferry routes in Australia',
+            [
+                '<b>MAP OF</b>',
+                '<b>FERRY ROUTES IN AUSTRALIA</b>',
+                '<i>Compiled using data from SilverRails Tech</i>',
+            ]
         )

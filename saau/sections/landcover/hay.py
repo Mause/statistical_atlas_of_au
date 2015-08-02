@@ -3,6 +3,7 @@ import logging
 import cartopy.crs as ccrs
 
 from .data import LandcoverImageProvider, load_data
+from ..misc.header import render_header_to
 
 ALUM = ['3.3.3 Hay & silage']
 
@@ -41,4 +42,14 @@ class HayImageProvider(LandcoverImageProvider):
             # color='transparent'
         )
 
-        return aus_map
+        return render_header_to(
+            aus_map,
+            19.5,
+            [
+                '<b>MAP</b>',
+                'SHOWING THE RANGE OF LAND COVER FOR',
+                '<b>HAY</b>',
+                'WITHIN THE TERRITORY OF AUSTRALIA',
+                '<i>Compiled using data from the Department of Agriculture</i>'
+            ]
+        )

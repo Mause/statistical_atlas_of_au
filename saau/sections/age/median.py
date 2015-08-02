@@ -100,6 +100,7 @@ class MedianAgeImageProvider(ImageProvider):
 
         return render_header_to(
             aus_map,
+            19.25,
             [
                 "<b>MAP</b>",
                 "SHOWING THE DISTRIBUTION OF",

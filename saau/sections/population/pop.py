@@ -8,6 +8,7 @@ from matplotlib.cm import get_cmap
 
 from ..abs import get_generic_data, abs_data_to_dataframe
 from ..image_provider import ImageProvider
+from ..misc.header import render_header_to
 
 filename = 'ABS_ANNUAL_ERP_LGA2014.json'
 
@@ -52,7 +53,19 @@ def main(services, data_dir, output_filename):
     )
     cb.set_label('Population')
 
-    return aus_map
+    return render_header_to(
+        aus_map,
+        19.5,
+        [
+            '<b>MAP</b>',
+            'SHOWING THE FIVE DEGREES OF DENSITY, THE DISTRIBUTION',
+            '<b>OF</b>',
+            'POPULATION',
+            '<i>'
+            'Compiled using estimates from the Australian Bureau of Statistics'
+            '</i>'
+        ]
+    )
 
 
 class PopulationDensityImageProvider(ImageProvider):
