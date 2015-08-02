@@ -61,8 +61,8 @@ class TransportationImageProvider(ImageProvider):
         return build_from_paths(self.load_json(self.path))
 
 
-# 'ferrys',
 IMAGES = [
+    'ferrys.FerryImageProvider',
     'railroads.RailroadImageProvider',
     'roads.RoadImageProvider'
 ]
