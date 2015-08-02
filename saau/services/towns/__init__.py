@@ -186,7 +186,10 @@ class SA3(RequiresData):
         '0/7130A5514535C5FCCA257801000D3FBD/'
         '$File/1270055001_sa2_2011_aust_shape.zip'
     )
-    filename = basename(url)
+
+    def __init__(self, data_dir, services):
+        super().__init__(data_dir, services)
+        self.filename = basename(self.url)
 
     def has_required_data(self):
         return self.data_dir_exists(self.filename)
@@ -200,15 +203,10 @@ class SA3(RequiresData):
     @lru_cache()
     def load_reference(self):
         shpfile = shape_from_zip(self.data_dir_join(self.filename))
-        import pandas
-        df = pandas.DataFrame([
+        return pandas.DataFrame([
             dict(rec.attributes, rec=rec)
             for rec in shpfile.records()
-        ])
-        for column in df:
-            if 'CODE' in column and column != 'GCC_CODE11':
-                df[column] = df[column].astype(int)
-        return df
+        ]).convert_objects(convert_numeric=True)
 
     def get(self, key, value):
         """
