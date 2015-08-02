@@ -126,6 +126,7 @@ class LocationConversion(RequiresData):
         return all(
             self.obtain_data_for_url(filename, url)
             for filename, url in zip(self.filenames, self.urls)
+            if not self.data_dir_exists(filename)
         )
 
     def obtain_data_for_url(self, filename, url):
