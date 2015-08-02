@@ -1,4 +1,4 @@
 IMAGES = [
-    'pop.PopulationDensityImageProvider',
+    'density.PopulationDensityImageProvider',
     'male_vs_female.MaleVSFemaleImageProvider'
 ]
