@@ -1,6 +1,5 @@
 import struct
 import enum
-from itertools import count
 from collections import namedtuple
 from os.path import join
 
@@ -182,8 +181,10 @@ def get_min(fh):
 
 
 def parse_raster_data(filename, tile_index, bounding, header):
-    # pixels = (bounding.urx - bounding.lrx) / header.HPixelSizeX
-    # lines = (bounding.ury - bounding.lry) / header.HPixelSizeY
+    lrx = bounding.llx
+    lry = bounding.lly
+    pixels = (bounding.urx - lrx) / header.HPixelSizeX
+    lines = (bounding.ury - lry) / header.HPixelSizeY
 
     with open(filename, 'rb') as fh:
         check_header(fh)

@@ -96,7 +96,6 @@ def setup(args):
     logging.info('Setting up services')
     services_container = Services()
 
-    __import__('ipdb').set_trace()
     services = list(load_service_providers(None))
     services = initialize_providers(services, services_container)
     build_tree(CACHE, services)
