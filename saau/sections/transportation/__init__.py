@@ -60,7 +60,10 @@ class TransportationImageProvider(ImageProvider):
             return False
 
     def build_image(self, output_filename):
-        return build_from_paths(self.load_json(self.path))
+        return build_from_paths(
+            self.services,
+            self.load_json(self.path)
+        )
 
 
 IMAGES = [
