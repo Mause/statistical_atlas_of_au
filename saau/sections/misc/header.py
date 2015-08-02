@@ -4,6 +4,7 @@ from lxml.etree import fromstring, XMLSyntaxError
 
 import numpy as np
 
+from ...fonts import hand_shop
 
 
 def parse_lines(lines):
@@ -35,6 +36,8 @@ def render_header_to(ax, sy, lines, sx=0.5):
     for idx, attrs in enumerate(line_attrs):
         if 'b' in attrs:
             lines[idx].set_weight('extra bold')
+            lines[idx].set_font_properties(hand_shop)
+            lines[idx].set_fontsize(25)
         if 'i' in attrs:
             lines[idx].set_style('italic')
 
