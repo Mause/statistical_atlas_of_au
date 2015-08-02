@@ -217,6 +217,14 @@ class SA3(RequiresData):
         return ref[ref[key] == value]
 
 
+class LGA(SA3):
+    url = (
+        'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
+        '0/03275B7661181087CA2578CC001223EA/'
+        '$File/1259030001_lga11aaust_shape.zip'
+    )
+
+
 class TownsData(RequiresData):
     service_name = 'towns'
 
@@ -254,5 +262,6 @@ class TownsData(RequiresData):
 SERVICES = [
     '__init__.TownsData',
     '__init__.LocationConversion',
-    '__init__.SA3'
+    '__init__.SA3',
+    '__init__.LGA'
 ]
