@@ -5,19 +5,23 @@ import cartopy.crs as ccrs
 from .data import LandcoverImageProvider, load_data
 from ..misc.header import render_header_to
 
-ALUM = ['3.3.3 Hay & silage']
+ALUM = {'3.3.3 Hay & silage', '3.3.3'}
+
+
+def key(record):
+    return (
+        record.get('LU_CODE_1') in ALUM or
+        record.get('TERTIARY_V') in ALUM
+    )
 
 
 class HayImageProvider(LandcoverImageProvider):
     def build_image(self):
         data = load_data(self.data_dir)
 
-        data = filter(
-            lambda record: record['TERTIARY_V'] in ALUM,
-            data
-        )
-
+        data = filter(key, data)
         data = list(data)
+
         logging.info('%d data thingies for hay', len(data))
 
         logging.info('Building geometries')
