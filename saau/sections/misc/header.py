@@ -22,7 +22,7 @@ def parse_lines(lines):
 
 def render_header_to(ax, sy, lines, sx=0.5):
     calc = lambda q: q / 20
-    y_points = map(calc, np.arange(sy, 0, -1))
+    y_points = map(calc, np.arange(sy, 0, -0.5))
 
     parsed = list(parse_lines(lines))
     lines = map(itemgetter(0), parsed)
