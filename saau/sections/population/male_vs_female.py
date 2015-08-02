@@ -12,7 +12,7 @@ from matplotlib import patches as mpatches
 from matplotlib.colors import ListedColormap
 
 from ..image_provider import ImageProvider
-from ..abs import get_generic_data, collapse_concepts
+from ..abs import get_generic_data, abs_data_to_dataframe
 from ..misc.header import render_header_to
 
 OBTAIN_URL = (
@@ -31,11 +31,6 @@ COLOR_RANGE_HEX = [
     '#B03F41'
 ]
 COLOR_RANGE = ListedColormap(COLOR_RANGE_HEX, 'MaleVSFemale')
-BULLSHIT_LOCATIONS = {
-    'Unincorporated NT', 'No usual address (NT)',
-    'Unincorporated ACT', 'No usual address (ACT)',
-    'Unincorp. Other Territories', 'No usual address (OT)'
-}
 
 
 class MaleVSFemaleImageProvider(ImageProvider):
@@ -50,31 +45,19 @@ class MaleVSFemaleImageProvider(ImageProvider):
                 'AGE.TT',
                 # 'STATE.0',
                 'MEASURE.1',
-                # 'REGIONTYPE.LGA2011'
+                'REGIONTYPE.LGA2011'
             ]
             # frequency, age, sex, measure, lga_region
         )
         return self.save_json(FILENAME, data)
 
     def load_data(self):
-        data = self.load_json(FILENAME)['series']
-        data = (
-            dict(thing, concepts=collapse_concepts(thing['concepts']))
-            for thing in data
-        )
-        data = (
-            dict(ob, **thing['concepts'])
-            for thing in data
-            for ob in thing['observations']
-        )
+        df = abs_data_to_dataframe(self.load_json(FILENAME))
 
-        df = pandas.DataFrame(data)
-
-        # del df[['annotation', 'FREQUENCY', 'MEASURE', 'AGE']]
         df.SEX = (
             df.SEX
             .replace(
-                ['1', '2', '3'],
+                [1, 2, 3],
                 ['Males', 'Females', 'Persons']
             )
             .astype('category')
@@ -84,19 +67,15 @@ class MaleVSFemaleImageProvider(ImageProvider):
             'SEX': 'Sex'
         }, inplace=True)
 
-        integer_columns = ['Value', 'Time', 'Location']
-        df[integer_columns] = df[integer_columns].astype(int)
-
         df = df[~(
             (df.Sex == 'Persons') |
-            (df.Value == 0) |
-            df.Location.isin(BULLSHIT_LOCATIONS)
+            (df.Value == 0)
         )]
         df = df[df.pop('Time') == 2013]
 
         return df
 
-    def render_map(self, data, towns):
+    def render_map(self, data):
         logging.info('Building map')
 
         aus_map = self.services.aus_map.get_map()  # (zorder=10)
@@ -106,7 +85,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
 
         for cl, pc_diff in data:
             aus_map.add_geometries(
-                [towns[cl].geometry],
+                [d.geometry for d in cl.rec],
                 facecolor=COLOR_RANGE(pc_diff),
                 edgecolor='grey',
                 linewidth=0.125,
@@ -129,28 +108,12 @@ class MaleVSFemaleImageProvider(ImageProvider):
         df = self.load_data()
         logging.info('Data for %d towns available', len(df))
 
-        logging.info('Loading towns')
-        towns = self.services.towns.get_towns()
-        logging.info('Towns loaded')
-
         logging.info("Classifying population data")
         data = []
 
-        lga_to_lga_name = self.services.conv.lga_to_lga_name
+        get_shape = lambda lga: self.services.lga.get('LGA_CODE11', lga)
 
-        unlocatable = 0
         for location in df.Location.unique():
-            try:
-                clean_location = lga_to_lga_name(
-                    location
-                ).rpartition(' ')[0]
-            except KeyError:
-                unlocatable += 1
-                continue
-            if clean_location not in towns:
-                unlocatable += 1
-                continue
-
             rel = df[df.Location == location]
             # there is some weird duplication in the dataset,
             # so we just get the highest value for each sex
@@ -161,28 +124,11 @@ class MaleVSFemaleImageProvider(ImageProvider):
             # negative here means more females, otherwise more males
             pc_diff = (rel['Males'] / rel['Females'] * 100) - 100
             data.append((
-                clean_location,
+                get_shape(location),
                 pc_diff
             ))
 
-        # import numpy as np
-        # import matplotlib.pyplot as plt
-        # ddata = np.array(data)
-
-        # plt.bar(
-        #     ddata[::, 1].astype(float),
-        #     np.arange(len(ddata)),
-        # )
-        # plt.show()
-
-        assert len(data)
-        logging.info('unlocatable -> %d', unlocatable)
-
-        aus_map = self.render_map(data, towns)
-
-        # aus_map.set_title('Male VS Female Population')
-
-        from ..misc.header import render_header_to
+        aus_map = self.render_map(data)
 
         return render_header_to(
             aus_map,
