@@ -7,6 +7,7 @@ import cartopy.crs as ccrs
 
 from ..abs import get_generic_data, collapse_concepts
 from ..image_provider import ImageProvider
+from ..misc.header import render_header_to
 
 DATASETID = 'ABS_CENSUS2011_B02'
 FILENAME = 'median_ages.json'
@@ -97,4 +98,12 @@ class MedianAgeImageProvider(ImageProvider):
         )
         cb.set_label('Average age')
 
-        return aus_map
+        return render_header_to(
+            aus_map,
+            [
+                "<b>MAP</b>",
+                "SHOWING THE DISTRIBUTION OF",
+                "<b>MEDIAN AGE</b>",
+                "<i>Compiled using data from the 2011 Australian Census</i>"
+            ]
+        )
