@@ -9,7 +9,7 @@ ALUM = ['3.3.3 Hay & silage']
 
 
 class HayImageProvider(LandcoverImageProvider):
-    def build_image(self, output_filename):
+    def build_image(self):
         data = load_data(self.data_dir)
 
         data = filter(

@@ -18,7 +18,7 @@ def get_data(data_dir):
         return abs_data_to_dataframe(json.load(fh))
 
 
-def main(services, data_dir, output_filename):
+def main(services, data_dir):
     logging.info('loading data')
     dat = get_data(data_dir)
 
@@ -87,5 +87,5 @@ class PopulationDensityImageProvider(ImageProvider):
         )
         return self.save_json(filename, data)
 
-    def build_image(self, output_filename):
-        return main(self.services, self.data_dir, output_filename)
+    def build_image(self):
+        return main(self.services, self.data_dir)

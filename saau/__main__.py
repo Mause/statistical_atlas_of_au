@@ -132,7 +132,7 @@ def build_images(image_providers, rerender_all=False):
 
         try:
             logging.info('Building graph for %s', get_name(prov))
-            fig = prov.build_image(output_filename)
+            fig = prov.build_image()
             logging.info('Rendering %s', get_name(prov))
             try:
                 fig.savefig(output_filename)

@@ -59,7 +59,7 @@ class TransportationImageProvider(ImageProvider):
             os.unlink(filename)
             return False
 
-    def build_image(self, output_filename):
+    def build_image(self):
         return build_from_paths(
             self.services,
             self.load_json(self.path)

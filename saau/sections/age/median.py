@@ -42,7 +42,7 @@ class MedianAgeImageProvider(ImageProvider):
 
         return self.save_json(FILENAME, data)
 
-    def build_image(self, _):
+    def build_image(self):
         colors = get_cmap('Purples')
 
         age_data = self.load_json(FILENAME)

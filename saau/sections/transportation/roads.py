@@ -6,7 +6,7 @@ class RoadImageProvider(TransportationImageProvider):
     path = 'road_paths.json'
     layers = ['All_Roads', 'Major_Road_Network']
 
-    def build_image(self, _):
+    def build_image(self):
         return render_header_to(
             super().build_image(_),
             19.5,

@@ -49,7 +49,7 @@ def generate():
 class DetailedAgeImageProvider(ImageProvider):
     has_required_data = lambda _: True
 
-    def build_image(self, q):
+    def build_image(self):
         fig, ax = plt.subplots(nrows=2, ncols=1)
 
         data = pd.DataFrame(list(generate()))

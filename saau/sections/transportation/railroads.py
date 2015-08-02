@@ -6,9 +6,9 @@ class RailroadImageProvider(TransportationImageProvider):
     path = 'railroad_paths.json'
     layers = ['Railways']
 
-    def build_image(self, _):
+    def build_image(self):
         return render_header_to(
-            super().build_image(_),
+            super().build_image(),
             19.5,
             [
                 '<b>MAP OF</b>',

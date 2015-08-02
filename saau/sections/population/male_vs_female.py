@@ -104,7 +104,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
         )
         return aus_map
 
-    def build_image(self, output_filename):
+    def build_image(self):
         df = self.load_data()
         logging.info('Data for %d towns available', len(df))
 

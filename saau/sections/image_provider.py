@@ -47,5 +47,5 @@ class RequiresData:
 
 
 class ImageProvider(RequiresData):
-    def build_image(self, output_filename):
+    def build_image(self):
         raise not_implemented()

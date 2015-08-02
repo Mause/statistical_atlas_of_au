@@ -101,11 +101,9 @@ class FerryImageProvider(TransportationImageProvider):
             list(obtain_data())
         )
 
-    def build_image(self, q):
-        fig = super().build_image(q)
-
+    def build_image(self):
         return render_header_to(
-            fig,
+            super().build_image(),
             19.25,
             [
                 '<b>MAP OF</b>',

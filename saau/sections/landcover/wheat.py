@@ -8,7 +8,7 @@ from .data import LandcoverImageProvider, load_data
 
 
 class WheatImageProvider(LandcoverImageProvider):
-    def build_image(self, output_filename):
+    def build_image(self):
         # aus_map = get_map()
 
         logging.info('Loading data')

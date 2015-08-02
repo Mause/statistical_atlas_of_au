@@ -51,7 +51,7 @@ class Header:
     __init__ = lambda self, _, a: None
     has_required_data = lambda _: True
 
-    def build_image(self, _):
+    def build_image(self):
         ax = plt.axes()
         render_header_to(ax)
         plt.show()
