@@ -135,7 +135,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
             19.25,
             lines=[
                 '<b><t>MAP OF</t></b>',
-                '<b>Predominating Sex</b>',
+                '<b>PREDOMINATING SEX</b>',
                 'SHOWING THE EXCESS OF MALES OR OF FEMALES',
                 'IN THE DISTRIBUTION OF POPULATION OVER COUNTRY AREA',
                 '<i>Compiled using estimates from the ABS Census Data 2011</i>'
