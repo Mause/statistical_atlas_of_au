@@ -1,5 +1,5 @@
 import logging
-import pickle
+import dill as pickle
 from itertools import count
 from os.path import join, exists, basename
 
