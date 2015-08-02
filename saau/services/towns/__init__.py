@@ -217,6 +217,8 @@ class SA3(RequiresData):
 
 
 class TownsData(RequiresData):
+    service_name = 'towns'
+
     def has_required_data(self):
         return True
 
