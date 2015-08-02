@@ -1,4 +1,6 @@
 import re
+from ..utils import get_name
+
 
 def build_name(serv):
     if hasattr(serv, 'service_name'):
@@ -10,11 +12,14 @@ def build_name(serv):
         get_name(serv)
     ).lower().strip('_')
 
+
 class Services:
+    __str__ = __repr__ = lambda self: (
+        '<Services times {}>'.format(len(self.services))
+    )
+
     def inject(self, services):
         self.services = {build_name(serv): serv for serv in services}
-
-
 
     def __getattr__(self, name):
         try:
