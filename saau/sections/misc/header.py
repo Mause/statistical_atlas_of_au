@@ -1,15 +1,9 @@
 import matplotlib.pyplot as plt
-from operator import gt, lt, itemgetter
+from operator import itemgetter
 from lxml.etree import fromstring, XMLSyntaxError
 
+import numpy as np
 
-def frange(start, stop, step):
-    cur = start
-    op = gt if start > stop else lt
-
-    while op(cur, stop):
-        yield cur
-        cur += step
 
 
 def parse_lines(lines):
@@ -27,7 +21,7 @@ def parse_lines(lines):
 
 def render_header_to(ax, sy, lines, sx=0.5):
     calc = lambda q: q / 20
-    y_points = map(calc, frange(sy, 0, -1))
+    y_points = map(calc, np.arange(sy, 0, -1))
 
     parsed = list(parse_lines(lines))
     lines = map(itemgetter(0), parsed)
