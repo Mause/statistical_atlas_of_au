@@ -51,7 +51,10 @@ def get_states(services):
 
 def get_map(services, show_world=False, zorder=0):
     ax = plt.axes([0, 0, 1, 1], projection=ccrs.Mercator())
-    # ax.figure.set_size_inches(50, 70)
+
+    change = lambda x: (x / 100) * 2
+    width, height = change(960), change(730)
+    ax.figure.set_size_inches(width, height, foward=True)
 
     if show_world:
         ax.set_global()
