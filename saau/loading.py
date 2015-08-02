@@ -49,10 +49,19 @@ def load_providers(filter_pattern, attr_name, package_name):
         )
         matcher = lambda prov: fnmatch(prov, filter_pattern)
 
+    def getter(package):
+        try:
+            return getattr(package, attr_name)
+        except AttributeError:
+            raise AttributeError(
+                "{} doesn't expose a {} attribute"
+                .format(package, attr_name)
+            )
+
     image_providers = [
         (package,) + tuple(image_provider.split('.'))
         for package in top_level
-        for image_provider in getattr(package, attr_name)
+        for image_provider in getter(package)
         if matcher(image_provider)
     ]
 
