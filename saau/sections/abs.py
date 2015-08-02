@@ -6,6 +6,7 @@ https://web.archive.org/web/20141026141936/http://stat.abs.gov.au/itt/r.jsp?api
 from io import BytesIO
 from zipfile import ZipFile
 
+import pandas
 import requests
 
 BASE = 'http://stat.abs.gov.au/itt/query.jsp'
@@ -169,6 +170,19 @@ def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
 
 def collapse_concepts(concepts):
     return {t['name']: t['Value'] for t in concepts}
+
+
+def abs_data_to_dataframe(data):
+    data = [
+        dict(
+            collapse_concepts(locale['concepts']),
+            **observation
+        )
+        for locale in data['series']
+        for observation in locale['observations']
+    ]
+
+    return pandas.DataFrame(data).convert_objects(convert_numeric=True)
 
 
 if __name__ == '__main__':
