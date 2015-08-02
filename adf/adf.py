@@ -1,3 +1,8 @@
+"""
+https://web.archive.org/web/20121124091208/
+http://home.gdal.org/projects/aigrid/aigrid_format.html
+"""
+
 import struct
 import enum
 from collections import namedtuple
