@@ -51,9 +51,11 @@ class TransportationImageProvider(ImageProvider):
         # some extra validation
         filename = self.data_dir_join(self.path)
         try:
+            # ensure there's actually something in the file
             with open(filename) as fh:
                 return bool(json.load(fh))
         except ValueError:
+            # if the file doesn't contain valid json, remove it
             os.unlink(filename)
             return False
 
