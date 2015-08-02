@@ -1,34 +1,35 @@
 import json
 import logging
-from os.path import expanduser
+from os.path import join
 
 import pandas
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib as mpl
+import cartopy.crs as ccrs
+from matplotlib.cm import get_cmap
 
-from ..aus_map import get_map
+from ..abs import get_generic_data, collapse_concepts
 from ..image_provider import ImageProvider
 
-filename = (
-    'ABS_ANNUAL_ERP_LGA2014_Data_e7f16b2f-edf9-4da4-9cbc-4d2e06154315.csv'
-)
+filename = 'ABS_ANNUAL_ERP_LGA2014.json'
 
 
-def get_data():
-    df = pandas.read_csv(filename)
+def get_data(data_dir):
+    with open(join(data_dir, filename)) as fh:
+        data = json.load(fh)
 
-    dat = df[df.Time == 2014]
-    return dat[dat['Region Type'] == 'Local Government Areas (2014)']
+    data = [
+        dict(
+            collapse_concepts(locale['concepts']),
+            **observation
+        )
+        for locale in data['series']
+        for observation in locale['observations']
+    ]
 
+    df = pandas.DataFrame(data).convert_objects(convert_numeric=True)
 
-def get_towns():
-    with open(expanduser('~/Dropbox/fuelwatch/data/towns.json')) as fh:
-        towns = json.load(fh)
-
-    return {
-        name.split(',')[0].strip(): loc
-        for name, loc in towns.items()
-    }
+    return df[df.Time == 2014]
 
 
 clean_region = lambda region: ' '.join(region.split()[:-1])
@@ -38,62 +39,79 @@ def is_locatable(towns):
     return lambda row: clean_region(row.Region) in towns
 
 
-def main():
-    print('loading towns')
-    towns = get_towns()
-    print('loading data')
-    dat = get_data()
+get_town = None
 
-    print('finding towns')
-    locatable = dat[dat.apply(is_locatable(towns), 1)]
 
-    print('annotating towns')
-    populations = locatable.apply(
-        lambda thing: (
-            (thing.Value,) +
-            tuple(towns[clean_region(thing.Region)])
-        ),
-        1
+def main(services, data_dir, output_filename):
+    logging.info('loading data')
+    dat = get_data(data_dir)
+
+    logging.info('finding towns')
+
+    valid = [
+        row.Region
+        for idx, row in dat.iterrows()
+        if get_town(towns, row.Region)
+    ]
+
+    norm = mpl.colors.Normalize(
+        vmin=dat.Value.min(),
+        vmax=dat.Value.max()
     )
+    cmap = get_cmap('hot')
+    populations = np.array([
+        (
+            row.Region, row.Value,
+            get_town(towns, row.Region),
+            cmap(norm(row.Value))
+        )
+        for _, row in dat[dat.Region.isin(valid)].iterrows()
+    ])
 
-    populations = np.array(populations)
-    populations = np.array(list(map(np.array, populations)))
+    logging.info('building map')
 
-    heat = populations[::, 0]
-    x = populations[::, 1]
-    y = populations[::, 2]
+    aus_map = services.aus_map.get_map()
 
-    print('building map')
+    logging.info('mapping %d towns', len(populations))
+    for name, population, rec, color in populations:
+        aus_map.add_geometries(
+            [rec.geometry],
+            crs=ccrs.PlateCarree(),
+            facecolor=color,
+            edgecolor='grey'
+        )
 
-    colors = np.zeros((len(x), len(y)))
-    for sx, sy, sc in zip(range(len(x)), range(len(y)), heat):
-        colors[sx][sy] = sc
+    cax = aus_map.figure.add_axes([0.95, 0.2, 0.02, 0.6])
+    cb = mpl.colorbar.ColorbarBase(
+        cax,
+        cmap=cmap,
+        norm=norm,
+        spacing='props'
+    )
+    cb.set_label('Population')
 
-    get_map()  # bah, globals
-    # print('mapping towns')
-
-    # import cartopy.crs as ccrs
-    # rotated_pole = ccrs.RotatedPole(pole_longitude=177.5, pole_latitude=37.5)
-
-    # plt.pcolor(x, y, colors, cmap='hot_r', transform=rotated_pole)
-
-    print('showing \'em')
-    plt.savefig('town_populations.png')
+    return aus_map
 
 
 class PopulationDensityImageProvider(ImageProvider):
-    """
-    Data must be obtained manually
-    """
     def has_required_data(self):
-        return self.data_dir_exists(
-            'ABS_ANNUAL_ERP_LGA2014_Data_e7f16b2f-edf9-4da4-9cbc-4d2e06154315'
-            '.csv'
-        )
+        if not self.data_dir_exists(filename):
+            return False
+
+        with open(self.data_dir_join(filename)) as fh:
+            return bool(fh.read())
 
     def obtain_data(self):
-        logging.info(
-            'Data for PopulationDensityImageProvider cannot be obtained '
-            'automatically'
+        data = get_generic_data(
+            'ABS_ANNUAL_ERP_LGA2014',
+            and_=[
+                'FREQUENCY.A',
+                'REGIONTYPE.LGA2014',
+                'MEASURE.ERP',
+            ]
         )
-        return False
+        return self.save_json(filename, data)
+
+    def build_image(self, output_filename):
+        __import__('ipdb').set_trace()
+        return main(self.services, self.data_dir, output_filename)
