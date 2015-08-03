@@ -1,16 +1,13 @@
 from functools import reduce
 from os.path import basename, splitext
-from zipfile import ZipFile
 from functools import lru_cache
-from io import BytesIO
 
 import pandas
-import requests
 import dill as pickle
 
 from ...sections.image_provider import RequiresData
 from ...sections.shape import shape_from_zip
-from ...sections.download import get_binary
+from ...sections.download import get_binary, get_abs_csv
 
 DYNAMIC_TABLE = {
     'STATE_NAME_2011': 'state_name',
@@ -124,23 +121,13 @@ class LocationConversion(RequiresData):
 
     def obtain_data(self):
         return all(
-            self.obtain_data_for_url(filename, url)
+            get_abs_csv(
+                url,
+                self.data_dir_join(filename)
+            )
             for filename, url in zip(self.filenames, self.urls)
             if not self.data_dir_exists(filename)
         )
-
-    def obtain_data_for_url(self, filename, url):
-        r = requests.get(url)
-        assert r.ok, r.json()
-        content = r.content
-
-        with ZipFile(BytesIO(content)) as ziper:
-            data = ziper.read(ziper.namelist()[0])
-
-        with open(self.data_dir_join(filename), 'wb') as fh:
-            fh.write(data)
-
-        return self.data_dir_exists(filename)
 
     def __getattribute__(self, name):
         try:
