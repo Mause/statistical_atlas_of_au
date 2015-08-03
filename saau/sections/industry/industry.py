@@ -129,8 +129,8 @@ class IndustryImageProvider(ImageProvider):
         data = {
             state: data[data.state == state_num][INDUSTRIES].sum()
             for state_num, state in STATES.items()
+            if state != 'Australia'
         }
-        del data['Australia']
 
         fig, ax = plt.subplots(nrows=3, ncols=3)
 
