@@ -145,6 +145,7 @@ class IndustryImageProvider(ImageProvider):
             )
 
             subax.set_title(state)
+            subax.set_xticklabels([])
 
         fig.legend(
             [
