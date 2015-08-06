@@ -5,7 +5,7 @@ from matplotlib.cm import get_cmap
 import matplotlib as mpl
 import cartopy.crs as ccrs
 
-from ..abs import get_generic_data, collapse_concepts
+from ...utils.download.abs import get_generic_data, collapse_concepts
 from ..image_provider import ImageProvider
 from ..misc.header import render_header_to
 

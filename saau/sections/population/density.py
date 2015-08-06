@@ -6,7 +6,7 @@ import matplotlib as mpl
 import cartopy.crs as ccrs
 from matplotlib.cm import get_cmap
 
-from ..abs import get_generic_data, abs_data_to_dataframe
+from ...utils.download.abs import get_generic_data, abs_data_to_dataframe
 from ..image_provider import ImageProvider
 from ..misc.header import render_header_to
 
