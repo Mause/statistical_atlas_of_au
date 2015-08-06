@@ -5,7 +5,7 @@ import pickle
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
-from ...sections.shape import shape_from_zip
+from ...utils.shape import shape_from_zip
 from ...sections.image_provider import RequiresData
 from ...utils.download import get_binary
 

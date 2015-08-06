@@ -4,7 +4,7 @@ from itertools import count
 from os.path import join, exists, basename
 
 from ..image_provider import ImageProvider
-from ..shape import shape_from_zip
+from ...utils.shape import shape_from_zip
 from ...utils.download import get_binary
 
 DATA_URLS = [

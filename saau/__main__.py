@@ -18,7 +18,7 @@ sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .services import Services
 from .utils import get_name, move_old
-from .sections.shape import ShapeFileNotFoundException
+from .utils.shape import ShapeFileNotFoundException
 from .loading import load_image_providers, load_service_providers
 
 import matplotlib.pyplot as plt
