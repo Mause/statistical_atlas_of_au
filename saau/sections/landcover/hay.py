@@ -3,7 +3,7 @@ import logging
 import cartopy.crs as ccrs
 
 from .data import LandcoverImageProvider, load_data
-from ..misc.header import render_header_to
+from ...utils.header import render_header_to
 
 ALUM = {'3.3.3 Hay & silage', '3.3.3'}
 

@@ -13,7 +13,7 @@ from matplotlib.colors import ListedColormap
 
 from ..image_provider import ImageProvider
 from ...utils.download.abs import get_generic_data, abs_data_to_dataframe
-from ..misc.header import render_header_to
+from ...utils.header import render_header_to
 
 OBTAIN_URL = (
     'http://stat.abs.gov.au/'

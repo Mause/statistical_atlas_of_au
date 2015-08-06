@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 
 from ...utils.download.abs import get_generic_data, collapse_concepts
 from ..image_provider import ImageProvider
-from ..misc.header import render_header_to
+from ...utils.header import render_header_to
 
 DATASETID = 'ABS_CENSUS2011_B02'
 FILENAME = 'median_ages.json'

@@ -1,5 +1,5 @@
 from . import TransportationImageProvider
-from ..misc.header import render_header_to
+from ...utils.header import render_header_to
 
 
 class RoadImageProvider(TransportationImageProvider):

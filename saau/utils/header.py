@@ -4,7 +4,7 @@ from lxml.etree import fromstring, XMLSyntaxError
 
 import numpy as np
 
-from ...fonts import hand_shop
+from ..fonts import hand_shop
 
 
 def parse_lines(lines):
