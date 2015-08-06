@@ -1,7 +1,7 @@
 import requests
 
 from . import TransportationImageProvider
-from ..shapely_utils import boundary_to_polygon, raw_boundary_to_polygon
+from ...utils.shapely_utils import boundary_to_polygon, raw_boundary_to_polygon
 from ...services.aus_map import AUS_NW, AUS_SE
 from ...utils.header import render_header_to
 
