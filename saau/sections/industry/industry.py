@@ -159,5 +159,4 @@ class IndustryImageProvider(ImageProvider):
         fig.tight_layout()
         fig.set_size_inches(16, 9)
 
-
         return fig

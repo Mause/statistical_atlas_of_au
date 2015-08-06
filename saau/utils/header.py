@@ -1,8 +1,8 @@
-import matplotlib.pyplot as plt
 from operator import itemgetter
-from lxml.etree import fromstring, XMLSyntaxError
 
 import numpy as np
+import matplotlib.pyplot as plt
+from lxml.etree import fromstring, XMLSyntaxError
 
 from ..fonts import hand_shop
 

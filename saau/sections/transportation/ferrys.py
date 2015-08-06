@@ -26,27 +26,10 @@ def get_datasets():
     return r.json()["AvailableDataSets"]
 
 
-def show(ax, poly, color):
-    import numpy as np
-    ppoints = np.array(poly.boundary.coords[:])
-    ax.scatter(
-        ppoints[::, 0], ppoints[::, 1],
-        color=color
-    )
-
-
 def get_australian_dataset_names():
     for dataset in get_datasets():
         boundary = dataset["BoundaryPolyline"]
         boundary = boundary_to_polygon(boundary, True)
-
-        # import matplotlib.pyplot as plt
-        # print(dataset['Id'])
-        # ax = plt.gca()
-        # show(ax, boundary, 'red')
-        # show(ax, AUSTRALIA_BOUNDARY, 'blue')
-        # plt.savefig('{}.png'.format(dataset['Id']))
-        # ax.clear()
 
         if AUSTRALIA_BOUNDARY.intersects(boundary):
             yield dataset['Id']
@@ -77,7 +60,6 @@ def obtain_data():
             }
         )
 
-        # routeTimetableGroupUid = 'PerthRestricted:3'
         for transit_stop in r.json()['TransitStops']:
             if 'Ferry' not in transit_stop['SupportedModes']:
                 continue
