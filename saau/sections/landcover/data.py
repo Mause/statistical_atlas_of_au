@@ -5,7 +5,7 @@ from os.path import join, exists, basename
 
 from ..image_provider import ImageProvider
 from ..shape import shape_from_zip
-from ..download import get_binary
+from ...utils.download import get_binary
 
 DATA_URLS = [
     "http://data.daff.gov.au/data/warehouse/lusag4l___001/SA_shape.zip",

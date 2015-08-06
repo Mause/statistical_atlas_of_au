@@ -7,7 +7,7 @@ import cartopy.crs as ccrs
 
 from ...sections.shape import shape_from_zip
 from ...sections.image_provider import RequiresData
-from ...sections.download import get_binary
+from ...utils.download import get_binary
 
 name = lambda q: q.attributes['NAME_1']
 DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')

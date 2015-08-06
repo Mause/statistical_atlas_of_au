@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 from ..image_provider import ImageProvider
-from ..download import get_abs_csv
+from ...utils.download import get_abs_csv
 
 url = (
     'http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/'
