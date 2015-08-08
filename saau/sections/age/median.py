@@ -5,7 +5,7 @@ from matplotlib.cm import get_cmap
 import matplotlib as mpl
 import cartopy.crs as ccrs
 
-from ...utils.download.abs import get_generic_data, collapse_concepts
+from ...utils.download.abs import get_generic_data, abs_data_to_dataframe
 from ..image_provider import ImageProvider
 from ...utils.header import render_header_to
 
@@ -45,14 +45,7 @@ class MedianAgeImageProvider(ImageProvider):
     def build_image(self):
         colors = get_cmap('Purples')
 
-        age_data = self.load_json(FILENAME)
-        age_data = [
-            dict(
-                collapse_concepts(data_point['concepts']),
-                **data_point['observations'][0]
-            )
-            for data_point in age_data['series']
-        ]
+        age_data = abs_data_to_dataframe(self.load_json(FILENAME))
 
         region_lookup = lambda sa3: self.services.sa3.get(
             'SA3_CODE11', int(sa3)
@@ -60,10 +53,10 @@ class MedianAgeImageProvider(ImageProvider):
 
         age_data = [
             (
-                region_lookup(data_point['REGION']),
-                int(data_point['Value'])
+                region_lookup(data_point.REGION),
+                data_point.Value
             )
-            for data_point in age_data
+            for _, data_point in age_data.iterrows()
         ]
 
         values = list(map(itemgetter(1), age_data))
