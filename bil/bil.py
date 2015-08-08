@@ -59,21 +59,25 @@ def parse_bil(base):
         if 'SKIPBYTES' in props:
             fh.read(props['SKIPBYTES'])
 
-        rows = []
+        rows = [
+            [
+                [
+                    0
+                    for band in range(props['NBANDS'])
+                ]
+                for col in range(props['NCOLS'])
+            ]
+            for row in range(props['NROWS'])
+        ]
         for row in range(props['NROWS']):
-            bands = []
             for band in range(props['NBANDS']):
-                bands.append([])
                 for column in range(props['NCOLS']):
                     value = fh.read(nbytes)
-                    bands[-1].append(
+                    rows[row][column][band] = (
                         format_string(endian, nbytes).unpack(value)[0]
                     )
                     if 'BANDGAPBYTES' in props:
                         fh.read(props['BANDGAPBYTES'])
-
-            bands = list(zip(*bands))  # form bands
-            rows.append(bands)
 
     return props, rows
 
