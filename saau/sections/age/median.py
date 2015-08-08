@@ -42,18 +42,16 @@ class MedianAgeImageProvider(ImageProvider):
 
         return self.save_json(FILENAME, data)
 
+    def region_lookup(self, sa3):
+        return self.services.sa3.get('SA3_CODE11', int(sa3))
+
     def build_image(self):
         colors = get_cmap('Purples')
 
         age_data = abs_data_to_dataframe(self.load_json(FILENAME))
-
-        region_lookup = lambda sa3: self.services.sa3.get(
-            'SA3_CODE11', int(sa3)
-        )
-
         age_data = [
             (
-                region_lookup(data_point.REGION),
+                self.region_lookup(data_point.REGION),
                 data_point.Value
             )
             for _, data_point in age_data.iterrows()
