@@ -5,16 +5,46 @@
 #include <assert.h>
 
 typedef struct {
-    int NBITS;
-    int BYTEORDER;
+    char BYTEORDER;  // BYTEORDER     I
+    char* LAYOUT;     // LAYOUT        BIL
+    int NROWS;         // NROWS         8
+    int NCOLS;         // NCOLS         6
+    int NBANDS;        // NBANDS        1
+    int NBITS;         // NBITS         32
+    int BANDROWBYTES;   // BANDROWBYTE   24
+    int TOTALROWBYTES; // TOTALROWBYTES 24
     int SKIPBYTES;
-    int NROWS;
-    int NBANDS;
-    int NCOLS;
-    int BANDGAPBYTES;
-    int BANDROWBYTES;
+    int BANDGAPBYTES;  // BANDGAPBYTES  0
+    double NODATA;    // NODATA        0
+    double ULXMAP;    // ULXMAP        2000.000
+    double ULYMAP;    // ULYMAP        3000.000
+    double XDIM;      // XDIM          5.000000
+    double YDIM;      // YDIM          5.000000
+    double SCALE;     // SCALE         100
+    double OFFSET;    // OFFSET        100.000000
 } BILHeader;
 
+typedef enum {
+    BYTEORDER,
+    LAYOUT,
+    NROWS,
+    NCOLS,
+    NBANDS,
+    NBITS,
+    BANDROWBYTES,
+    TOTALROWBYTES,
+    BANDGAPBYTES,
+    NODATA,
+    ULXMAP,
+    ULYMAP,
+    XDIM,
+    YDIM,
+    SCALE,
+    OFFSET,
+    SKIPBYTES
+} HeaderValue;
+
+// the union type which should be used is specified by the header
 typedef struct {
     union {
         signed char eight;
@@ -56,31 +86,100 @@ BIL* make_bil(BILHeader* header) {
 void white(FILE* fh) {
     char c;
     while ((c = fgetc(fh)) == ' ') {}
-    fputc(c, fh);
+    ungetc(c, fh);
 }
 
-typedef enum {
-    NBITS,
-    BYTEORDER,
-    SKIPBYTES,
-    NROWS,
-    NBANDS,
-    NCOLS,
-    BANDGAPBYTES,
-    BANDROWBYTES
-} HeaderValue;
 
-
-size_t classify(char* name) {
-    if (strcmp(name, "NBITS") == 0)        return NBITS;
-    // if (strcmp(name, "BYTEORDER") == 0)    return BYTEORDER;
-    if (strcmp(name, "SKIPBYTES") == 0)    return SKIPBYTES;
-    if (strcmp(name, "NROWS") == 0)        return NROWS;
-    if (strcmp(name, "NBANDS") == 0)       return NBANDS;
-    if (strcmp(name, "NCOLS") == 0)        return NCOLS;
-    if (strcmp(name, "BANDGAPBYTES") == 0) return BANDGAPBYTES;
-    if (strcmp(name, "BANDROWBYTES") == 0) return BANDROWBYTES;
+#define HEADER_NAME(hname, hval) if (strcmp(name, (hname)) == 0) return hval;
+int classify(char* name) {
+    HEADER_NAME("NBITS", NBITS)
+    HEADER_NAME("SKIPBYTES", SKIPBYTES)
+    HEADER_NAME("NROWS", NROWS)
+    HEADER_NAME("NBANDS", NBANDS)
+    HEADER_NAME("NCOLS", NCOLS)
+    HEADER_NAME("BANDGAPBYTES", BANDGAPBYTES)
+    HEADER_NAME("BANDROWBYTES", BANDROWBYTES)
+    HEADER_NAME("TOTALROWBYTES", TOTALROWBYTES)
+    HEADER_NAME("BYTEORDER", BYTEORDER)
+    HEADER_NAME("LAYOUT", LAYOUT)
+    HEADER_NAME("NODATA", NODATA)
+    HEADER_NAME("ULXMAP", ULXMAP)
+    HEADER_NAME("ULYMAP", ULYMAP)
+    HEADER_NAME("XDIM", XDIM)
+    HEADER_NAME("YDIM", YDIM)
+    HEADER_NAME("SCALE", SCALE)
+    HEADER_NAME("OFFSET", OFFSET)
     return -1;
+}
+
+
+void parse_header_val_int(int* dest, FILE* fh) {
+    int i = 0;
+    assert(fscanf(fh, "%d", &i) == 1);
+    *dest = i;
+}
+
+void parse_header_val_double(double* dest, FILE* fh) {
+    double i = 0;
+    assert (fscanf(fh, "%f", &i) == 1);
+    *dest = i;
+}
+
+// NROWS         600
+// NCOLS         960
+// NBANDS        1
+// NBITS         16
+// BANDROWBYTES        1920
+// TOTALROWBYTES       1920
+// BANDGAPBYTES         0
+
+// BYTEORDER      M
+// LAYOUT       BIL
+// NODATA        -9999
+// ULXMAP          72.00416666666666
+// ULYMAP         -50.00416666666667
+// XDIM          0.00833333333333
+// YDIM          0.00833333333333
+
+void parse_byte_order(BILHeader* bh, FILE* fh) {
+    white(fh);
+    bh->BYTEORDER = fgetc(fh);
+    printf("BYTEORDER: \"%c\"\n", bh->BYTEORDER);
+}
+
+
+void parse_header_string(char* dest, FILE* fh) {
+    dest = malloc(sizeof(char) * 256);
+    white(fh);
+    fgets(
+        dest,
+        256 * sizeof(char),
+        fh
+    );
+}
+
+
+void parse_header_val(BILHeader* bh, int ident, FILE* fh) {
+    switch (ident) {
+        case NBITS:         parse_header_val_int(&(bh->NBITS),         fh); break;
+        case SKIPBYTES:     parse_header_val_int(&(bh->SKIPBYTES),     fh); break;
+        case NROWS:         parse_header_val_int(&(bh->NROWS),         fh); break;
+        case NBANDS:        parse_header_val_int(&(bh->NBANDS),        fh); break;
+        case NCOLS:         parse_header_val_int(&(bh->NCOLS),         fh); break;
+        case BANDGAPBYTES:  parse_header_val_int(&(bh->BANDGAPBYTES),  fh); break;
+        case TOTALROWBYTES: parse_header_val_int(&(bh->TOTALROWBYTES), fh); break;
+        case BANDROWBYTES:  parse_header_val_int(&(bh->BANDROWBYTES),  fh); break;
+        case NODATA:        parse_header_val_double(&(bh->NODATA),     fh); break;
+        case BYTEORDER:     parse_byte_order(bh,                       fh); break;
+        case LAYOUT:        parse_header_string(bh->LAYOUT,            fh); break;
+        case ULXMAP:        parse_header_val_double(&(bh->ULXMAP),     fh); break;
+        case ULYMAP:        parse_header_val_double(&(bh->ULYMAP),     fh); break;
+        case XDIM:          parse_header_val_double(&(bh->XDIM),       fh); break;
+        case YDIM:          parse_header_val_double(&(bh->YDIM),       fh); break;
+        case SCALE:         parse_header_val_double(&(bh->SCALE),      fh); break;
+        case OFFSET:        parse_header_val_double(&(bh->OFFSET),     fh); break;
+        default: assert(0 != 1);
+    }
 }
 
 
@@ -104,20 +203,10 @@ BILHeader* parse_header(char* base) {
         ident = classify(buffer);
 
         if (ident != -1) {
-            int i = 0;
-            assert(fscanf(fh, "%d", &i) == 1);
-            switch (ident) {
-                case NBITS:        bh->NBITS = i;        break;
-                // case BYTEORDER:    bh->BYTEORDER = i;    break;
-                case SKIPBYTES:    bh->SKIPBYTES = i;    break;
-                case NROWS:        bh->NROWS = i;        break;
-                case NBANDS:       bh->NBANDS = i;       break;
-                case NCOLS:        bh->NCOLS = i;        break;
-                case BANDGAPBYTES: bh->BANDGAPBYTES = i; break;
-                case BANDROWBYTES: bh->BANDROWBYTES = i; break;
-                default: assert(0 != 1);
-            }
+            parse_header_val(bh, ident, fh);
         } else {
+            printf("Invalid header name; %s\n", buffer);
+            return NULL;
             fgets(buffer, 1024, fh);
         }
     }
