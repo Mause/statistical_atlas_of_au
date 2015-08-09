@@ -121,7 +121,7 @@ void parse_header_val_int(int* dest, FILE* fh) {
 
 void parse_header_val_double(double* dest, FILE* fh) {
     double i = 0;
-    assert (fscanf(fh, "%f", &i) == 1);
+    assert (fscanf(fh, "%lf", &i) == 1);
     *dest = i;
 }
 
