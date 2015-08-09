@@ -2,7 +2,8 @@ import cffi
 import struct
 
 ffi = cffi.FFI()
-ffi.cdef('''typedef struct {
+ffi.cdef('''
+typedef struct {
     int NBITS;
     int BYTEORDER;
     int SKIPBYTES;
@@ -13,10 +14,19 @@ ffi.cdef('''typedef struct {
     int BANDROWBYTES;
 } BILHeader;
 
+// the union type which should be used is specified by the header
 typedef struct {
-    char**** rows;
+    union {
+        signed char eight;
+        int sixteen;
+    };
+} Value;
+
+typedef struct {
+    Value**** rows;
     BILHeader* header;
 } BIL;
+
 BIL* parse_bil(char* base);
 ''')
 
@@ -27,24 +37,17 @@ def c_parse_bil(base):
     return convert_rows(lib.parse_bil(base.encode('ascii')))
 
 
-def decode(val):
-    return ord(val)
-    # return struct.unpack('h', val)[0]
-
-
-def coallesce(string, nbytes):
-    return decode(b''.join(string[i] for i in range(nbytes)))
 
 
 def convert_rows(res):
-    nbytes = res.header.NBITS // 8
+    attr_name = {
+        8: 'eight',
+        16: 'sixteen'
+    }[res.header.NBITS]
     return [
         [
             [
-                coallesce(
-                    res.rows[row][column][band],
-                    nbytes
-                )
+                getattr(res.rows[row][column][band], attr_name)
                 for band in range(res.header.NBANDS)
             ]
             for column in range(res.header.NCOLS)

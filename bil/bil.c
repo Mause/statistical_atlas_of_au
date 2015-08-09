@@ -16,7 +16,14 @@ typedef struct {
 } BILHeader;
 
 typedef struct {
-    char**** rows;
+    union {
+        signed char eight;
+        int sixteen;
+    };
+} Value;
+
+typedef struct {
+    Value**** rows;
     BILHeader* header;
 } BIL;
 
@@ -26,15 +33,15 @@ BIL* make_bil(BILHeader* header) {
     int nbytes, row, col, band;
     nbytes = header->NBITS / 8;
 
-    b = calloc(sizeof(*b), 1);
+    b = malloc(sizeof(*b));
     b->header = header;
-    b->rows = calloc(sizeof(char****), header->NROWS);
+    b->rows = malloc(sizeof(Value****) * header->NROWS);
     for (row=0; row<header->NROWS; row++) {
-        b->rows[row] = calloc(sizeof(char***), header->NCOLS);
+        b->rows[row] = malloc(sizeof(Value***) * header->NCOLS);
         for (col=0; col<header->NCOLS; col++) {
-            b->rows[row][col] = calloc(sizeof(char**), header->NBANDS);
+            b->rows[row][col] = malloc(sizeof(Value**) * header->NBANDS);
             for (band=0; band<header->NBANDS; band++) {
-                b->rows[row][col][band] = calloc(nbytes, sizeof(char));
+                b->rows[row][col][band] = malloc(sizeof(Value));
             }
         }
     }
@@ -119,6 +126,24 @@ BILHeader* parse_header(char* base) {
 }
 
 
+void parse_to_val(int nbits, char* value, Value* val) {
+    switch (nbits) {
+        case 8: {
+            val->eight = value[0];
+            break;
+        }
+        case 16: {
+            val->sixteen = (value[1] << 8) + value[0];
+            break;
+        }
+        default: {
+            printf("%db its\n", nbits);
+            assert(1 == 0);
+        }
+    }
+}
+
+
 __declspec(dllexport) BIL* parse_bil(char* base) {
     BILHeader* props;
     int nbytes, row, band, column;
@@ -146,11 +171,17 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
     for (row = 0; row < props->NROWS; row++) {
         for (band = 0; band < props->NBANDS; band++) {
             for (column = 0; column < props->NCOLS; column++) {
+                char* value = malloc(sizeof(char) * nbytes);
                 fread(
-                    b->rows[row][column][band],
+                    value,
                     sizeof(char),
                     nbytes,
                     fh
+                );
+                parse_to_val(
+                    props->NBITS,
+                    value,
+                    b->rows[row][column][band]
                 );
                 fread(buffer, sizeof(char), props->BANDGAPBYTES, fh);
             }
