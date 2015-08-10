@@ -75,9 +75,6 @@ BIL* make_bil(BILHeader* header) {
             }
         }
     }
-    if (b->rows[0] == NULL) {
-        perror("");
-    }
 
     return b;
 }
@@ -125,26 +122,9 @@ void parse_header_val_double(double* dest, FILE* fh) {
     *dest = i;
 }
 
-// NROWS         600
-// NCOLS         960
-// NBANDS        1
-// NBITS         16
-// BANDROWBYTES        1920
-// TOTALROWBYTES       1920
-// BANDGAPBYTES         0
-
-// BYTEORDER      M
-// LAYOUT       BIL
-// NODATA        -9999
-// ULXMAP          72.00416666666666
-// ULYMAP         -50.00416666666667
-// XDIM          0.00833333333333
-// YDIM          0.00833333333333
-
 void parse_byte_order(BILHeader* bh, FILE* fh) {
     white(fh);
     bh->BYTEORDER = fgetc(fh);
-    printf("BYTEORDER: \"%c\"\n", bh->BYTEORDER);
 }
 
 
@@ -186,18 +166,15 @@ void parse_header_val(BILHeader* bh, int ident, FILE* fh) {
 BILHeader* parse_header(char* base) {
     FILE* fh;
     char buffer[1024];
-    int ident, *ibh;
+    int ident;
     BILHeader* bh;
     char *filename;
 
-    filename = strdup(base);
-    strcat(filename, ".hdr");
-
+    filename = strcat(strdup(base), ".hdr");
     fh = fopen(filename, "rb");
     if (fh == NULL) return NULL;
 
     bh = malloc(sizeof(*bh));
-    ibh = (int*)bh;
 
     while (fscanf(fh, "%s", buffer) == 1) {
         ident = classify(buffer);
