@@ -224,6 +224,7 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
     char endian;
     char *filename;
     char buffer[1024];
+    char* value;
 
     props = parse_header(base);
     if (props == NULL) return NULL;
@@ -240,10 +241,10 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
 
     b = make_bil(props);
 
+    value = malloc(sizeof(char) * nbytes);
     for (row = 0; row < props->NROWS; row++) {
         for (band = 0; band < props->NBANDS; band++) {
             for (column = 0; column < props->NCOLS; column++) {
-                char* value = malloc(sizeof(char) * nbytes);
                 fread(
                     value,
                     sizeof(char),
@@ -260,6 +261,7 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
             }
         }
     }
+    free(value);
 
     return b;
 }
