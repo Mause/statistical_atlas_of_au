@@ -192,7 +192,7 @@ BILHeader* parse_header(char* base) {
 }
 
 
-void parse_to_val(int nbits, char* value, Value* val, char endian) {
+void parse_to_val(int nbits, unsigned char* value, Value* val, char endian) {
     switch (nbits) {
         case 8: {
             val->eight = value[0];
@@ -224,7 +224,7 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
     char endian;
     char *filename;
     char buffer[1024];
-    char* value;
+    unsigned char* value;
 
     props = parse_header(base);
     if (props == NULL) return NULL;
@@ -241,13 +241,13 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
 
     b = make_bil(props);
 
-    value = malloc(sizeof(char) * nbytes);
+    value = malloc(sizeof(unsigned char) * nbytes);
     for (row = 0; row < props->NROWS; row++) {
         for (band = 0; band < props->NBANDS; band++) {
             for (column = 0; column < props->NCOLS; column++) {
                 fread(
                     value,
-                    sizeof(char),
+                    sizeof(unsigned char),
                     nbytes,
                     fh
                 );
