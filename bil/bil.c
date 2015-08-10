@@ -192,14 +192,20 @@ BILHeader* parse_header(char* base) {
 }
 
 
-void parse_to_val(int nbits, char* value, Value* val) {
+void parse_to_val(int nbits, char* value, Value* val, char endian) {
     switch (nbits) {
         case 8: {
             val->eight = value[0];
             break;
         }
         case 16: {
-            val->sixteen = (value[1] << 8) + value[0];
+            if (endian == '>') {
+                val->sixteen = (value[1] << 8) + value[0];
+            } else if (endian == '<') {
+                val->sixteen = (value[0] << 8) + value[1];
+            } else {
+                printf("Derp\n");
+            }
             break;
         }
         default: {
@@ -247,7 +253,8 @@ __declspec(dllexport) BIL* parse_bil(char* base) {
                 parse_to_val(
                     props->NBITS,
                     value,
-                    b->rows[row][column][band]
+                    b->rows[row][column][band],
+                    endian
                 );
                 fread(buffer, sizeof(char), props->BANDGAPBYTES, fh);
             }
