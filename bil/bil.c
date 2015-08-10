@@ -148,11 +148,11 @@ void parse_byte_order(BILHeader* bh, FILE* fh) {
 }
 
 
-void parse_header_string(char* dest, FILE* fh) {
-    dest = malloc(sizeof(char) * 256);
+void parse_header_string(char** dest, FILE* fh) {
+    *dest = malloc(sizeof(char) * 256);
     white(fh);
     fgets(
-        dest,
+        *dest,
         256 * sizeof(char),
         fh
     );
@@ -171,7 +171,7 @@ void parse_header_val(BILHeader* bh, int ident, FILE* fh) {
         case BANDROWBYTES:  parse_header_val_int(&(bh->BANDROWBYTES),  fh); break;
         case NODATA:        parse_header_val_double(&(bh->NODATA),     fh); break;
         case BYTEORDER:     parse_byte_order(bh,                       fh); break;
-        case LAYOUT:        parse_header_string(bh->LAYOUT,            fh); break;
+        case LAYOUT:        parse_header_string(&(bh->LAYOUT),         fh); break;
         case ULXMAP:        parse_header_val_double(&(bh->ULXMAP),     fh); break;
         case ULYMAP:        parse_header_val_double(&(bh->ULYMAP),     fh); break;
         case XDIM:          parse_header_val_double(&(bh->XDIM),       fh); break;
