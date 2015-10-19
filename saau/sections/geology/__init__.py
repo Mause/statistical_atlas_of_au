@@ -1,0 +1,1 @@
+IMAGES = ['elevation.ElevationImageProvider']
