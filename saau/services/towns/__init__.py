@@ -145,9 +145,10 @@ class LocationConversion(RequiresData):
         ref = self.load_reference()
         try:
             ref[ofrom_], ref[oto_]
-            from_, to_ = ofrom_, oto_
         except KeyError:
             from_, to_ = DYNAMIC_TABLE_R[ofrom_], DYNAMIC_TABLE_R[oto_]
+        else:
+            from_, to_ = ofrom_, oto_
 
         def wrapper(from_val):
             from_val = try_int(from_val)
