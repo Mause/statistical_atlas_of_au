@@ -168,13 +168,7 @@ class LocationConversion(RequiresData):
         return self.dynamic_by_name(from_, to_)
 
 
-class SA3(RequiresData):
-    url = (
-        'http://www.abs.gov.au/ausstats/subscriber.nsf/'
-        '0/7130A5514535C5FCCA257801000D3FBD/'
-        '$File/1270055001_sa2_2011_aust_shape.zip'
-    )
-
+class RegionClassification(RequiresData):
     def __init__(self, data_dir, services):
         super().__init__(data_dir, services)
         self.filename = basename(self.url)
@@ -204,7 +198,15 @@ class SA3(RequiresData):
         return ref[ref[key] == value]
 
 
-class LGA(SA3):
+class SA3(RegionClassification):
+    url = (
+        'http://www.abs.gov.au/ausstats/subscriber.nsf/'
+        '0/7130A5514535C5FCCA257801000D3FBD/'
+        '$File/1270055001_sa2_2011_aust_shape.zip'
+    )
+
+
+class LGA(RegionClassification):
     url = (
         'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
         '0/03275B7661181087CA2578CC001223EA/'
@@ -212,7 +214,7 @@ class LGA(SA3):
     )
 
 
-class SA4(SA3):
+class SA4(RegionClassification):
     url = (
         'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
         '0/B18D49356F3FDA5FCA257801000D6D2E/'
