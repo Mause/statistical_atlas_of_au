@@ -75,6 +75,7 @@ COLORS = [
 
 
 class IndustryImageProvider(ImageProvider):
+
     def has_required_data(self):
         return self.data_dir_exists(filename)
 

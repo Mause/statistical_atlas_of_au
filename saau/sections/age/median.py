@@ -14,6 +14,7 @@ FILENAME = 'median_ages.json'
 
 
 class MedianAgeImageProvider(ImageProvider):
+
     def has_required_data(self):
         return self.data_dir_exists(FILENAME)
 

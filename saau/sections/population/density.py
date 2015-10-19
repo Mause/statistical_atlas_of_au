@@ -69,6 +69,7 @@ def main(services, data_dir):
 
 
 class PopulationDensityImageProvider(ImageProvider):
+
     def has_required_data(self):
         if not self.data_dir_exists(filename):
             return False

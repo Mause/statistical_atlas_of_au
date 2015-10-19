@@ -16,6 +16,7 @@ def key(record):
 
 
 class HayImageProvider(LandcoverImageProvider):
+
     def build_image(self):
         data = load_data(self.data_dir)
 

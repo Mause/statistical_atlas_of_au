@@ -20,6 +20,7 @@ def not_implemented():
 
 
 class RequiresData:
+
     def __init__(self, data_dir, services):
         self.data_dir = data_dir
         self.services = services
@@ -47,5 +48,6 @@ class RequiresData:
 
 
 class ImageProvider(RequiresData):
+
     def build_image(self):
         raise not_implemented()

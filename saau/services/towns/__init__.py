@@ -25,6 +25,7 @@ def get_towns():
 
 
 class DummyRecord:
+
     def __init__(self, attributes, geometry):
         self.attributes = attributes
         self.geometry = geometry
@@ -169,6 +170,7 @@ class LocationConversion(RequiresData):
 
 
 class RegionClassification(RequiresData):
+
     def __init__(self, data_dir, services):
         super().__init__(data_dir, services)
         self.filename = basename(self.url)

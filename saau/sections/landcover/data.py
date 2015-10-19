@@ -92,6 +92,7 @@ def load_data(data_dir):
 
 
 class LandcoverImageProvider(ImageProvider):
+
     def has_required_data(self):
         return all(map(self.data_dir_exists, FILENAMES))
 

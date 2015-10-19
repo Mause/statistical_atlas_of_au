@@ -1,7 +1,8 @@
 '''
 ABS_CENSUS2011_B13_LGA
 
-Estimated Resident Population by Sex by Age Group by LGA, 2001-2013 on ASGS 2013  MetaData : ERP by LGA (ASGS 2013)
+Estimated Resident Population by Sex by Age Group by LGA, 2001-2013 on
+ASGS 2013  MetaData : ERP by LGA (ASGS 2013)
 '''
 
 import logging
@@ -34,6 +35,7 @@ COLOR_RANGE = ListedColormap(COLOR_RANGE_HEX, 'MaleVSFemale')
 
 
 class MaleVSFemaleImageProvider(ImageProvider):
+
     def has_required_data(self):
         return self.data_dir_exists(FILENAME)
 

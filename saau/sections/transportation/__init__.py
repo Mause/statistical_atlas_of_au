@@ -32,6 +32,7 @@ def build_from_paths(services, paths):
 
 
 class TransportationImageProvider(ImageProvider):
+
     def __init__(self, data_dir, services):
         super().__init__(data_dir, services)
 

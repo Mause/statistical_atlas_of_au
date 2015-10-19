@@ -91,6 +91,7 @@ def get_map(services, show_world=False, zorder=0):
 
 
 class AusMap(RequiresData):
+
     def get_map(self, **kwargs):
         return get_map(self.services, **kwargs)
 
