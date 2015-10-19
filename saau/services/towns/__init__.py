@@ -212,6 +212,14 @@ class LGA(SA3):
     )
 
 
+class SA4(SA3):
+    url = (
+        'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
+        '0/B18D49356F3FDA5FCA257801000D6D2E/'
+        '$File/1270055001_sa4_2011_aust_shape.zip'
+    )
+
+
 class TownsData(RequiresData):
     service_name = 'towns'
 
@@ -250,5 +258,6 @@ SERVICES = [
     '__init__.TownsData',
     '__init__.LocationConversion',
     '__init__.SA3',
-    '__init__.LGA'
+    '__init__.LGA',
+    '__init__.SA4'
 ]
