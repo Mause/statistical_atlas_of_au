@@ -8,18 +8,18 @@ from matplotlib.cm import get_cmap
 import matplotlib as mpl
 import cartopy.crs as ccrs
 
-FILENAME = 'german.json'
-
 
 class GermanAncestryImageProvider(ImageProvider):
+    filename = 'german.json'
+
     def has_required_data(self):
-        return self.data_dir_exists(FILENAME)
+        return self.data_dir_exists(self.filename)
 
     def obtain_data(self):
-        return self.save_json(FILENAME, get_data('German'))
+        return self.save_json(self.filename, get_data('German'))
 
     def build_image(self):
-        data = abs_data_to_dataframe(self.load_json(FILENAME))
+        data = abs_data_to_dataframe(self.load_json(self.filename))
         data = data[data.pop('Time') == 2011]
         del data['ANCP']
         del data['FREQUENCY']
