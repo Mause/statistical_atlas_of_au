@@ -165,13 +165,11 @@ def abs_data_to_dataframe(data, delete_cols=None):
         for observation in locale['observations']
     ]
 
-    data = pandas.DataFrame(data).convert_objects(convert_numeric=True)
-
-    delete_cols = delete_cols or []
-    for col in delete_cols:
-        del data[col]
-
-    return data
+    return (
+        pandas.DataFrame(data)
+        .convert_objects(convert_numeric=True)
+        .drop(delete_cols or [], axis=1)
+    )
 
 
 if __name__ == '__main__':
