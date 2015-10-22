@@ -5,7 +5,7 @@ import logging
 import warnings
 import argparse
 from operator import itemgetter
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
 
 
@@ -69,7 +69,7 @@ def ensure_data(prov):
 
 def threaded_filter(predicate, iterable):
     # for each item in the iterable, determine is we should keep it
-    iterable = ThreadPoolExecutor(10).map(
+    iterable = PoolExecutor(10).map(
         lambda thing: (predicate(thing), thing),
         iterable
     )
@@ -118,8 +118,12 @@ def build_images(image_providers, rerender_all=False):
     else:
         logging.info('Rendering images')
 
-    for prov in image_providers:
-        build_image(prov, rerender_all)
+    with PoolExecutor(2) as exe:
+        exe.map(
+            lambda prov: build_image(prov, rerender_all),
+            image_providers
+        )
+
     logging.info('Done.')
 
 
