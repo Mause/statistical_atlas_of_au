@@ -11,12 +11,13 @@ import cartopy.crs as ccrs
 
 class GermanAncestryImageProvider(ImageProvider):
     filename = 'german.json'
+    ancestry_name = 'German'
 
     def has_required_data(self):
         return self.data_dir_exists(self.filename)
 
     def obtain_data(self):
-        return self.save_json(self.filename, get_data('German'))
+        return self.save_json(self.filename, get_data(self.ancestry_name))
 
     def build_image(self):
         data = abs_data_to_dataframe(self.load_json(self.filename))
