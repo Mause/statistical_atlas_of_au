@@ -155,7 +155,7 @@ def collapse_concepts(concepts):
     return {t['name']: t['Value'] for t in concepts}
 
 
-def abs_data_to_dataframe(data):
+def abs_data_to_dataframe(data, delete_cols=None):
     data = [
         dict(
             collapse_concepts(locale['concepts']),
@@ -165,7 +165,13 @@ def abs_data_to_dataframe(data):
         for observation in locale['observations']
     ]
 
-    return pandas.DataFrame(data).convert_objects(convert_numeric=True)
+    data = pandas.DataFrame(data).convert_objects(convert_numeric=True)
+
+    delete_cols = delete_cols or []
+    for col in delete_cols:
+        del data[col]
+
+    return data
 
 
 if __name__ == '__main__':
