@@ -21,6 +21,8 @@ from .utils import get_name, move_old
 from .utils.shape import ShapeFileNotFoundException
 from .loading import load_image_providers, load_service_providers
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from betamax import Betamax
 
