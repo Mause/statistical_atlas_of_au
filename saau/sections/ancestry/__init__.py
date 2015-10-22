@@ -1,7 +1,15 @@
 """
 http://stat.abs.gov.au/Index.aspx?DataSetCode=ABS_CENSUS2011_T09_LGA
 """
-IMAGES = ['german.GermanAncestryImageProvider']
+IMAGES = [
+    # 'american.AmericanAncestryImageProvider',
+    'british.BritishAncestryImageProvider',
+    'french.FrenchAncestryImageProvider',
+    'german.GermanAncestryImageProvider',
+    'irish.IrishAncestryImageProvider',
+    'italian.ItalianAncestryImageProvider',
+    'russian.RussianAncestryImageProvider',
+]
 
 from ..image_provider import ImageProvider
 from ...utils.download.abs import get_generic_data, abs_data_to_dataframe
@@ -46,7 +54,7 @@ MAP = {
 
 
 def get_data(country):
-    assert country in MAP
+    assert country in MAP, country
     return get_generic_data(
         'ABS_CENSUS2011_T09_LGA',
         and_=[
