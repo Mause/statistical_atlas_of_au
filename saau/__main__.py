@@ -119,41 +119,45 @@ def build_images(image_providers, rerender_all=False):
         logging.info('Rendering images')
 
     for prov in image_providers:
-        output_filename = join(
-            OUTPUT,
-            dir_for_thing(prov),
-            '{}.png'.format(prov.__module__.split('.')[-1])
-        )
-        if exists(output_filename):
-            if rerender_all:
-                move_old(output_filename)
-            else:
-                continue
-
-        try:
-            logging.info('Building graph for %s', get_name(prov))
-            fig = prov.build_image()
-            logging.info('Rendering %s', get_name(prov))
-            try:
-                fig.savefig(output_filename)
-            except AttributeError:
-                fig.figure.savefig(output_filename)
-            plt.close('all')  # don't allow an old image to affect a new one
-
-            if exists(output_filename):
-                logging.info('Render successful')
-
-        except NotImplementedError:
-            logging.exception("Can't render %s", get_name(prov))
-
-        except ShapeFileNotFoundException:
-            logging.info(
-                "Can't render %s; couldn't access required data",
-                get_name(prov)
-            )
-
-        del prov  # force cleanup
+        build_image(prov, rerender_all)
     logging.info('Done.')
+
+
+def build_image(prov, rerender_all):
+    output_filename = join(
+        OUTPUT,
+        dir_for_thing(prov),
+        '{}.png'.format(prov.__module__.split('.')[-1])
+    )
+    if exists(output_filename):
+        if not rerender_all:
+            return
+
+        move_old(output_filename)
+
+    try:
+        logging.info('Building graph for %s', get_name(prov))
+        fig = prov.build_image()
+        logging.info('Rendering %s', get_name(prov))
+        try:
+            fig.savefig(output_filename)
+        except AttributeError:
+            fig.figure.savefig(output_filename)
+        plt.close('all')  # don't allow an old image to affect a new one
+
+        if exists(output_filename):
+            logging.info('Render successful')
+
+    except NotImplementedError:
+        logging.exception("Can't render %s", get_name(prov))
+
+    except ShapeFileNotFoundException:
+        logging.info(
+            "Can't render %s; couldn't access required data",
+            get_name(prov)
+        )
+
+    del prov  # force cleanup
 
 
 def get_args():
