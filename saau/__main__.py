@@ -114,13 +114,13 @@ def setup(args):
     return list(filter(ensure_data, image_providers))
 
 
-def build_images(image_providers, rerender_all=False):
+def build_images(image_providers, rerender_all=False, threads=1):
     if rerender_all:
         logging.info('Rerendering all images')
     else:
         logging.info('Rendering images')
 
-    with PoolExecutor(2) as exe:
+    with PoolExecutor(threads) as exe:
         exe.map(
             lambda prov: build_image(prov, rerender_all),
             image_providers
@@ -166,6 +166,13 @@ def build_image(prov, rerender_all):
     del prov  # force cleanup
 
 
+def valid_thread_num(value):
+    ivalue = int(value)
+    if ivalue < 1:
+        raise argparse.ArgumentTypeError("%s is not greater than one" % value)
+    return ivalue
+
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -187,6 +194,13 @@ def get_args():
         action='store_true',
         help='Just download all the required data'
     )
+    parser.add_argument(
+        '-t', '--threads',
+        action='store',
+        default=1,
+        type=valid_thread_num,
+        help='Number of image rendering threads'
+    )
     return parser.parse_args()
 
 
@@ -204,7 +218,7 @@ def main():
 
     else:
         image_providers = setup(args)
-        build_images(image_providers, args.rerender)
+        build_images(image_providers, args.rerender, args.threads)
 
 
 if __name__ == '__main__':
