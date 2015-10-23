@@ -125,23 +125,6 @@ def reseat(nums):
     return nums
 
 
-def cached_get_points():
-    try:
-        with open('points.json') as fh:
-            return np.array(json.load(fh))
-    except (FileNotFoundError, ValueError):
-        pass
-
-    points = list(get_points())
-    with open('points.json', 'w') as fh:
-        bpoints = [
-            list(map(int, tup))
-            for tup in points
-        ]
-        json.dump(bpoints, fh)
-    return points
-
-
 def main():
     from PIL import Image
 
