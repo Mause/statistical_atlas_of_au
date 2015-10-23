@@ -101,16 +101,30 @@ def parse_bil(base):
     return props, np.array(rows)
 
 
-def parse_points(base):
-    props, rows = parse_bil(base)
+def parse_points(base, use_c=False):
+    from test_bil import timer
+    from ffi import c_parse_bil
 
-    points = np.array(
-        [
-            [x, y, rows[x][y][0]]
-            for y in range(props['NCOLS'])
-            for x in range(props['NROWS'])
-        ]
-    )
+    if not use_c:
+        props, rows = timer(parse_bil)(base)
+        points = np.array(rows, dtype=int)
+        points = np.array(
+            [
+                [x, y, points[x][y][0]]
+                for y in range(props['NCOLS'])
+                for x in range(props['NROWS'])
+            ]
+        )
+
+    else:
+        props, rows = timer(c_parse_bil)(base)
+        points = np.array(
+            [
+                (x, y, bands[0])
+                for x, y, bands in rows
+            ],
+            dtype=int
+        )
 
     points[::, 0] += props['ULXMAP']
     points[::, 1] += props['ULYMAP']
