@@ -7,20 +7,20 @@ from ..image_provider import ImageProvider
 from ...utils.download import get_binary
 from ...utils.shape import shape_from_zip
 
-url = 'http://www.ga.gov.au/corporate_data/48006/48006_shp.zip'
-filename = basename(url)
+URL = 'http://www.ga.gov.au/corporate_data/48006/48006_shp.zip'
+FILENAME = basename(URL)
 
 
 class ElevationImageProvider(ImageProvider):
 
     def has_required_data(self):
-        return self.data_dir_exists(filename)
+        return self.data_dir_exists(FILENAME)
 
     def obtain_data(self):
-        return get_binary(url, self.data_dir_join(filename))
+        return get_binary(URL, self.data_dir_join(FILENAME))
 
     def build_image(self):
-        shp = shape_from_zip(self.data_dir_join(filename))
+        shp = shape_from_zip(self.data_dir_join(FILENAME))
 
         aus_map = self.services.aus_map.get_map()
 
