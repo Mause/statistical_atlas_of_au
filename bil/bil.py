@@ -33,25 +33,45 @@ def parse_header(filename):
         }
 
 
-def format_string(endian, nbytes):
-    return struct.Struct({
+def format_string(endian, items, nbytes):
+    byte = {
         1: 'B',
         2: 'h',
-        2: 'H',
-        4: 'i',
-        4: 'I',
-        4: 'l',
-        4: 'L',
-        8: 'q',
-        8: 'Q',
-        4: 'f',
-        8: 'd',
-    }[nbytes])
+        # 2: 'H',
+        # 4: 'f',
+        # 4: 'i',
+        # 4: 'I',
+        # 4: 'l',
+        # 4: 'L',
+        # 8: 'd',
+        # 8: 'q',
+        # 8: 'Q',
+    }[nbytes]
+
+    return struct.Struct('{}{}{}'.format(endian, items, byte))
+
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i+n]
+
+
+def transpose(data):
+    return list(map(list, zip(*data)))
+
+
+def parse_row(fh, fmt, ncols, row_data_length):
+    data = fh.read(row_data_length)
+    items = fmt.unpack(data)
+    items = chunks(items, ncols)
+    return transpose(items)
 
 
 def parse_bil(base):
     props = parse_header(base)
     nbytes = props['NBITS'] // 8
+    assert 'BANDGAPBYTES' not in props or props['BANDGAPBYTES'] == 0
 
     endian = '<' if props['BYTEORDER'] == 'I' else '>'
 
@@ -59,27 +79,26 @@ def parse_bil(base):
         if 'SKIPBYTES' in props:
             fh.read(props['SKIPBYTES'])
 
+        fmt = format_string(
+            endian,
+            props['NCOLS'] * props['NBANDS'],
+            nbytes
+        )
+        row_data_length = props['NCOLS'] * props['NBANDS'] * nbytes
+        if 'BANDROWBYTES' in props:
+            assert row_data_length == props['BANDROWBYTES']
+
         rows = [
-            [
-                [
-                    0
-                    for band in range(props['NBANDS'])
-                ]
-                for col in range(props['NCOLS'])
-            ]
+            parse_row(
+                fh,
+                fmt,
+                props['NCOLS'],
+                row_data_length
+            )
             for row in range(props['NROWS'])
         ]
-        for row in range(props['NROWS']):
-            for band in range(props['NBANDS']):
-                for column in range(props['NCOLS']):
-                    value = fh.read(nbytes)
-                    rows[row][column][band] = (
-                        format_string(endian, nbytes).unpack(value)[0]
-                    )
-                    if 'BANDGAPBYTES' in props:
-                        fh.read(props['BANDGAPBYTES'])
 
-    return props, rows
+    return props, np.array(rows)
 
 
 def parse_points(base):
