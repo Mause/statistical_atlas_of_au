@@ -1,7 +1,6 @@
 from operator import itemgetter
 
 import numpy as np
-import matplotlib.pyplot as plt
 from lxml.etree import fromstring, XMLSyntaxError
 
 from ..fonts import hand_shop
@@ -42,14 +41,3 @@ def render_header_to(ax, sy, lines, sx=0.5):
             lines[idx].set_style('italic')
 
     return ax
-
-
-class Header:
-    __init__ = lambda self, _, a: None
-    has_required_data = lambda _: True
-
-    def build_image(self):
-        ax = plt.axes()
-        render_header_to(ax)
-        plt.show()
-        return ax
