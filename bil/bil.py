@@ -1,6 +1,9 @@
+import time
 from glob import iglob
-from os.path import splitext, dirname, basename
+from os.path import splitext, dirname, basename, exists, join
+import struct
 
+from PIL import Image
 import numpy as np
 
 base = (
