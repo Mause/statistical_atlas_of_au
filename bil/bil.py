@@ -130,6 +130,45 @@ def parse_points(base, use_c=False):
     return points
 
 
+def try_individual_files():
+    path = join(dirname(base), '*.bil')
+    paths = list(iglob(path))
+    print(len(paths))
+
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(20) as exe:
+        exe.map(try_individual, paths)
+
+
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        val = func(*args, **kwargs)
+        print(func, time.time() - start)
+        return val
+    return wrapper
+
+
+@timer
+def try_individual(bil):
+    name = splitext(bil)[0]
+
+    filename = 'output\\image_{}.png'.format(basename(name))
+    if exists(filename):
+        return
+
+    pts = parse_points(name)
+
+    pts = np.array(list(pts))
+    if pts.shape == (0,):
+        return
+
+    shape = (pts[::, 0].max() + 1, pts[::, 1].max() + 1)
+    pixels = np.zeros(shape)
+    pixels[pts[::, 0], pts[::, 1]] = pts[::, 2]
+
+    Image.fromarray(np.uint8(pixels)).save(filename)
+
+
 if __name__ == '__main__':
-    run_test()
-    # main()
+    try_individual_files()
