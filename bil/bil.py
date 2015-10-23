@@ -157,11 +157,13 @@ def try_individual(bil):
     if exists(filename):
         return
 
-    pts = parse_points(name)
-
-    pts = np.array(list(pts))
-    if pts.shape == (0,):
-        return
+    pts = np.array([
+        [
+            point[0]
+            for point in row
+        ]
+        for row in parse_bil(name)
+    ])
 
     shape = (pts[::, 0].max() + 1, pts[::, 1].max() + 1)
     pixels = np.zeros(shape)
