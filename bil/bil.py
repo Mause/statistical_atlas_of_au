@@ -1,12 +1,7 @@
-import json
-import struct
 from glob import iglob
 from os.path import splitext, dirname, basename
 
 import numpy as np
-# from matplotlib.cm import get_cmap
-from matplotlib.colors import Normalize
-# import matplotlib.pyplot as plt
 
 base = (
     'D:\\stats_data\\cache\\saau\\sections\\'
