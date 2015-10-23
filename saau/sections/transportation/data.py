@@ -24,8 +24,8 @@ def get_data(requested_layers):
     layers = get_layers(service)
 
     return chain.from_iterable(
-        layer.QueryLayer(Geometry=mend(layer.extent))
-        for layer in (layers[layer] for layer in requested_layers)
+        layer.QueryLayer(Geometry=mend(layers[layer].extent))
+        for layer in requested_layers
     )
 
 
