@@ -23,6 +23,15 @@ class Services:
 
     def __getattr__(self, name):
         try:
-            return self.services[name]
+            return super().__getattribute__(name)
+        except AttributeError:
+            pass
+
+        try:
+            # if isn't not already an attribute,
+            # look it up and cache it
+            value = self.services[name]
+            setattr(self, name, value)
+            return value
         except KeyError:
             raise AttributeError(name)
