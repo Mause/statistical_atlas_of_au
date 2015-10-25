@@ -163,8 +163,8 @@ class EntryParser:
         return ent
 
 
-def main():
-    with open(base + '.aux', 'rb') as fh:
+def parse(filename):
+    with open(filename, 'rb') as fh:
         label, ptr = struct.unpack('15sxcxxx', fh.read(20))
         label = label.decode()
         ptr = ord(ptr)
@@ -180,43 +180,45 @@ def main():
         )
 
         root = EntryParser(fh, rootEntryPtr).parse()
-        from pprint import pprint
-        pprint(root)
+    return root
 
-        nodes = Queue()
-        nodes.put(root)
-        names = set()
-        seen = set()
-        while not nodes.empty():
-            node = nodes.get()
-            if not isinstance(node, Entry) or node in seen:
-                continue
-            else:
-                seen.add(node)
-            names.add((node.typ, node.data))
 
-            # if node.name == 'DependentLayerName':
-            #     import IPython
-            #     IPython.embed()
+def main():
+    root = parse(base + '.aux')
+    print(root)
 
-            if node.prev:
-                nodes.put(node.prev)
-            if node.nxt:
-                nodes.put(node.nxt)
-            if node.child:
-                nodes.put(node.child)
+    nodes = Queue()
+    nodes.put(root)
+    names = set()
+    seen = set()
+    while not nodes.empty():
+        node = nodes.get()
+        if not isinstance(node, Entry) or node in seen:
+            continue
+        else:
+            seen.add(node)
+        names.add((node.typ, node.data))
 
-        pprint(names)
+        if node.name == 'DependentLayerName':
+            import IPython
+            IPython.embed()
 
-        # import IPython
-        # IPython.embed()
+        if node.prev:
+            nodes.put(node.prev)
+        if node.nxt:
+            nodes.put(node.nxt)
+        if node.child:
+            nodes.put(node.child)
 
-        # print(
-        #     freeList,
-        #     rootEntryPtr,
-        #     entryHeaderLength,
-        #     dictionaryPtr
-        # )
+    from pprint import pprint
+    pprint(names)
+
+    # print(
+    #     freeList,
+    #     rootEntryPtr,
+    #     entryHeaderLength,
+    #     dictionaryPtr
+    # )
 
 
 def to_tokens(string):
