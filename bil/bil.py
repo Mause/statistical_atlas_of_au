@@ -1,7 +1,7 @@
 import time
 from glob import iglob
-from os.path import splitext, dirname, basename, exists, join
-import struct
+from itertools import chain
+from os.path import splitext, dirname, basename, join
 
 from PIL import Image
 import numpy as np
@@ -11,166 +11,112 @@ base = (
     'geology\\48006_shp\\globalmap2001\\Raster\\elevation\\'
     'elscnf'
 )
-
-
-def try_parse(v):
-    for func in [int, float]:
-        try:
-            return func(v)
-        except ValueError:
-            pass
-    return v
-
-
-def parse_header(filename):
-    with open(filename + '.hdr') as fh:
-        props = map(str.split, fh.read().splitlines())
-        return {
-            k.upper(): try_parse(v)
-            for k, v in props
-        }
-
-
-def format_string(endian, items, nbytes):
-    byte = {
-        1: 'B',
-        2: 'h',
-        # 2: 'H',
-        # 4: 'f',
-        # 4: 'i',
-        # 4: 'I',
-        # 4: 'l',
-        # 4: 'L',
-        # 8: 'd',
-        # 8: 'q',
-        # 8: 'Q',
-    }[nbytes]
-
-    return struct.Struct('{}{}{}'.format(endian, items, byte))
-
-
-def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
-    for i in range(0, len(l), n):
-        yield l[i:i+n]
-
-
-def transpose(data):
-    return list(map(list, zip(*data)))
-
-
-def parse_row(fh, fmt, ncols, row_data_length):
-    data = fh.read(row_data_length)
-    items = fmt.unpack(data)
-    items = chunks(items, ncols)
-    return transpose(items)
-
-
-def parse_bil(base):
-    props = parse_header(base)
-    nbytes = props['NBITS'] // 8
-    assert 'BANDGAPBYTES' not in props or props['BANDGAPBYTES'] == 0
-
-    endian = '<' if props['BYTEORDER'] == 'I' else '>'
-
-    with open(base + '.bil', 'rb') as fh:
-        if 'SKIPBYTES' in props:
-            fh.read(props['SKIPBYTES'])
-
-        fmt = format_string(
-            endian,
-            props['NCOLS'] * props['NBANDS'],
-            nbytes
-        )
-        row_data_length = props['NCOLS'] * props['NBANDS'] * nbytes
-        if 'BANDROWBYTES' in props:
-            assert row_data_length == props['BANDROWBYTES']
-
-        rows = [
-            parse_row(
-                fh,
-                fmt,
-                props['NCOLS'],
-                row_data_length
-            )
-            for row in range(props['NROWS'])
-        ]
-
-    return props, np.array(rows)
-
-
-def parse_points(base, use_c=False):
-    from test_bil import timer
-    from ffi import c_parse_bil
-
-    if not use_c:
-        props, rows = timer(parse_bil)(base)
-        points = np.array(rows, dtype=int)
-        points = np.array(
-            [
-                [x, y, points[x][y][0]]
-                for y in range(props['NCOLS'])
-                for x in range(props['NROWS'])
-            ]
-        )
-
-    else:
-        props, rows = timer(c_parse_bil)(base)
-        points = np.array(
-            [
-                (x, y, bands[0])
-                for x, y, bands in rows
-            ],
-            dtype=int
-        )
-
-    points[::, 0] += props['ULXMAP']
-    points[::, 1] += props['ULYMAP']
-
-    return points
-
-
-def try_individual_files():
-    path = join(dirname(base), '*.bil')
-    paths = list(iglob(path))
-    print(len(paths))
-
-    from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(20) as exe:
-        exe.map(try_individual, paths)
+locations = [
+    ['vffa', 'vfla', 'wfaa', 'wffa', 'wfla', 'xfaa', 'xffa', 'xfla',   None],
+    ['vefl', 'vell', 'weal', 'wefl', 'well', 'xeal', 'xefl', 'xell', 'yeal'],
+    ['veff', 'velf', 'weaf', 'weff', 'welf', 'xeaf', 'xeff', 'xelf', 'yeaf'],
+    ['vefa', 'vela', 'weaa', 'wefa', 'wela', 'xeaa', 'xefa', 'xela', 'yeaa'],
+    ['vdfl', 'vdll', 'wdal', 'wdfl', 'wdll', 'xdal', 'xdfl', 'xdll', 'ydal'],
+    ['vdff', 'wdlf', 'wdaf', 'wdff', 'wdlf', 'xdaf', 'xdff', 'xdlf', 'ydaf'],
+    [ None,  None,    None,    None,   None,  None,  'xdda', 'xdka',  None],
+    [ None,  None,    None,    None,   None,  None,  'xcdl', 'xckl',  None]
+]
 
 
 def timer(func):
     def wrapper(*args, **kwargs):
         start = time.time()
         val = func(*args, **kwargs)
-        print(func, time.time() - start)
+        print(func.__name__, time.time() - start)
         return val
     return wrapper
 
 
-@timer
+# @timer
+def parse_bil(base):
+    import rasterio
+    with rasterio.drivers():
+        bil = rasterio.open(base + '.bil')
+        return bil.meta, bil.read()[0]
+
+
+# @timer
+def try_individual_files():
+    path = join(dirname(base), '*.bil')
+
+    return map(try_individual, iglob(path))
+
+
 def try_individual(bil):
     name = splitext(bil)[0]
 
-    filename = 'output\\image_{}.png'.format(basename(name))
-    if exists(filename):
-        return
+    props, pixels = parse_bil(name)
 
-    pts = np.array([
+    return basename(name), Image.fromarray(np.uint8(pixels))
+
+
+def transpose(data):
+    return list(map(list, zip(*data)))
+
+
+def resolve(images):
+    return [
         [
-            point[0]
-            for point in row
+            images[cube] if cube else None
+            for cube in row
         ]
-        for row in parse_bil(name)
-    ])
+        for row in locations
+    ]
 
-    shape = (pts[::, 0].max() + 1, pts[::, 1].max() + 1)
-    pixels = np.zeros(shape)
-    pixels[pts[::, 0], pts[::, 1]] = pts[::, 2]
 
-    Image.fromarray(np.uint8(pixels)).save(filename)
+def axes(resolved):
+    ...
 
+
+@timer
+def read_in():
+    images = dict(try_individual_files())
+    images = {name[2:]: image for name, image in images.items()}
+    return resolve(images)
+
+
+@timer
+def combine(resolved):
+    blank_image = Image.new(
+        "RGB",
+        (600 * len(locations[0]), 600 * len(locations))
+    )
+
+    x, y = 0, 0
+    for row in resolved:
+        for cube in row:
+            if cube:
+                blank_image.paste(
+                    cube,
+                    (x, y)
+                )
+            else:
+                x += 600
+        x = 0
+        y += 600
+
+    return blank_image
+
+
+@timer
+def save(im, filename):
+    im.save(filename)
+
+
+def main():
+    resolved = read_in()
+    width, height = 0, 0
+
+    save(combine(resolved), 'combined.png')
+
+    for im in chain.from_iterable(resolved):
+        if im:
+            im.close()
 
 if __name__ == '__main__':
-    try_individual_files()
+    main()
