@@ -128,9 +128,10 @@ def parse_to_struct(tokens):
 
 
 class Entry:
-    def __init__(self, nxt, prev, parent, child, data, dataSize, name, typ,
-                 modTime):
-        self.nxt = nxt
+    def __init__(self, ptr, next, prev, parent, child, data, dataSize, name,
+                 typ, modTime):
+        self.ptr = ptr  # essentially a unique identifier within the file
+        self.next = next
         self.prev = prev
         self.parent = parent
         self.child = child
