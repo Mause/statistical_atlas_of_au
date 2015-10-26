@@ -231,13 +231,7 @@ class EntryParser:
             self.queue.put((ent, label, getattr(ent, label)))
 
 
-
-
-
-class MIF:
-    def __init__(self, struct_def, spec):
-        self.struct_def = struct_def
-        self.spec = spec
+class MIF(namedtuple('MIF', 'struct_def,spec')):
 
     def _from_file(self, fh):
         data = self.struct_def.unpack_from(fh.read(self.struct_def.size))
