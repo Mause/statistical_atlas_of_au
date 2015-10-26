@@ -13,7 +13,7 @@ base = (
 )
 NUM_RE = re.compile(r'(\d*)')
 STR_RE = re.compile(r'([A-Za-z0-9_ -]*)')
-PUNC = set('{},:')
+PUNC = set('{},:*')
 
 
 FORMATS = json.load(open('formats.json'))
@@ -86,6 +86,13 @@ def parse_to_struct(tokens):
 
             typ = determine_type(name)
 
+            if typ in {'*', 'p'}:
+                meta = typ
+                typ = name[1:2]
+                name = name[1:]
+            else:
+                meta = None
+
             if typ == 'o':
                 # okay, custom type
                 type_name = name[1:]
@@ -95,7 +102,7 @@ def parse_to_struct(tokens):
                 else:
                     raise Exception
 
-                yield (1, {'type': typ, 'name': nc(tokens)})
+                yield (1, {'type': typ, 'name': nc(tokens), 'meta': meta})
 
             elif typ == 'e':
                 # okay, enum
@@ -106,14 +113,15 @@ def parse_to_struct(tokens):
                     {
                         "type": "c",
                         "values": [nc(tokens) for _ in range(n_elems)],
-                        "name": nc(tokens)
+                        "name": nc(tokens),
+                        'meta': meta
                     }
                 )
 
             else:
                 assert comma == ','
 
-                yield (length, {'type': typ, 'name': name[1:]})
+                yield (length, {'type': typ, 'name': name[1:], 'meta': meta})
 
         else:
             raise BadFormatString(token)
