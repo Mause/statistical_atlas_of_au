@@ -268,24 +268,32 @@ def mif(name):
     return compile_mif(name, FORMATS[name])
 
 
+def parse_mif_dictionary(fh, ptr):
+    ...
+
+
 def parse(filename):
     with open(filename, 'rb') as fh:
-        label, ptr = struct.unpack('15sxcxxx', fh.read(20))
-        label = label.decode()
-        ptr = ord(ptr)
-        print(label, ptr)
+        data = mif('Ehfa_HeaderTag').from_file(fh)
+        label, ptr = data['label'], data['headerPtr']
+        assert clean_string(label) == 'EHFA_HEADER_TAG'
 
         fh.seek(ptr)
 
-        version = struct.unpack('l', fh.read(4))[0]
-        assert version == 1, version
+        ehfa_file = mif('Ehfa_File').from_file(fh)
+        assert ehfa_file['version'] == 1
 
-        freeList, rootEntryPtr, entryHeaderLength, dictionaryPtr = (
-            struct.unpack('<IIhI', fh.read(14))
+        fh.seek(ehfa_file['rootEntryPtr'])
+
+        dictionaryPtr = ehfa_file['dictionaryPtr']
+        mif_dictionary = (
+            None if dictionaryPtr == 0
+            else parse_mif_dictionary(fh, dictionaryPtr)
         )
 
-        root = EntryParser(fh, rootEntryPtr).parse()
-    return root
+        root = EntryParser(fh, ehfa_file['rootEntryPtr']).parse()
+
+    return IMGFile(ehfa_file["version"], root, mif_dictionary)
 
 
 def to_tokens(string):
