@@ -1,5 +1,6 @@
 import re
 import struct
+import ctypes
 from queue import Queue
 
 base = (
@@ -106,6 +107,10 @@ class Entry:
     )
 
 
+def clean_string(string):
+    return ctypes.create_string_buffer(b''.join(string)).value.decode()
+
+
 class EntryParser:
     def __init__(self, fh, root_ptr):
         self.fh = fh
@@ -122,8 +127,6 @@ class EntryParser:
         root.child.parent = None
         return root.child
 
-    def clean_string(self, string):
-        return string.decode().strip('\x00').split('\x00')[0]
 
     def parse_entry(self, ptr, parent):
         if ptr in self.seen:
