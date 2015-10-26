@@ -232,6 +232,7 @@ class EntryParser:
 
 
 class MIF(namedtuple('MIF', 'name,struct_def,spec')):
+    __str__ = lambda self: '<MIF {}>'.format(self.name)
 
     def _from_file(self, fh):
         data = self.struct_def.unpack_from(fh.read(self.struct_def.size))
