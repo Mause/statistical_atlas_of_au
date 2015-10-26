@@ -294,6 +294,10 @@ def parse(filename):
     return IMGFile(ehfa_file["version"], root, mif_dictionary)
 
 
+def main():
+    print(parse(base + '.aux'))
+
+
 def to_tokens(string):
     while string:
         if string[0] in PUNC:
