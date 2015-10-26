@@ -182,14 +182,16 @@ class EntryParser:
         )
         self.seen[ptr] = ent
 
-        if ent.nxt:
-            self.queue.put((ent, 'nxt', nxt))
-        if ent.prev:
-            self.queue.put((ent, 'prev', prev))
-        if ent.child:
-            self.queue.put((ent, 'child', child))
+        self.enqueue(ent, 'next')
+        self.enqueue(ent, 'prev')
+        self.enqueue(ent, 'child')
 
         return ent
+
+    def enqueue(self, ent, label):
+        if getattr(ent, label):
+            self.queue.put((ent, label, getattr(ent, label)))
+
 
 
 def parse(filename):
