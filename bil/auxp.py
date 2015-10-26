@@ -64,6 +64,7 @@ def parse_to_struct(tokens):
             name = tokens.pop(0)
             comma = tokens.pop(0)
 
+            typ = determine_type(name)
             if comma != ',':
                 # okay, multiple elements
 
@@ -85,7 +86,7 @@ def parse_to_struct(tokens):
             else:
                 assert comma == ','
 
-                yield (length, [{'type': name[0], 'name': name[1:]}])
+                yield (length, [{'type': typ, 'name': name[1:]}])
 
         else:
             raise BadFormatString(token)
