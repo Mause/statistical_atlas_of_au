@@ -142,18 +142,6 @@ class Entry:
 
     def __hash__(self):
         return hash(self.ptr)
-        # return hash((
-        #     self.ptr,
-        #     self.next,
-        #     self.prev,
-        #     self.parent,
-        #     self.child,
-        #     self.data,
-        #     self.dataSize,
-        #     self.name,
-        #     self.typ,
-        #     self.modTime
-        # ))
 
     def __eq__(self, other):
         return hash(self) == hash(other)
@@ -322,8 +310,4 @@ def to_tokens(string):
 
 
 if __name__ == '__main__':
-    # from pprint import pprint
-    # tokens = list(to_tokens(multiple))
-    __import__('ipdb').set_trace()
-    # pprint(OrderedDict(list(parse_to_struct(tokens))))
     main()
