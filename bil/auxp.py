@@ -4,7 +4,7 @@ import struct
 import ctypes
 from queue import Queue
 from functools import lru_cache
-from collections import OrderedDict
+from collections import namedtuple, OrderedDict
 
 base = (
     'D:\\stats_data\\cache\\saau\\sections\\'
@@ -19,6 +19,17 @@ PUNC = set('{},:')
 FORMATS = json.load(open('formats.json'))
 
 
+class AUXFile(namedtuple('AUXFile', 'version,rootEntry,mifDictionary')):
+    def __hash__(self):
+        return hash(
+            (
+                self.rootEntry,
+                self.mifDictionary
+            )
+        )
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
 
 
 MIF_DATA_TYPES = {
