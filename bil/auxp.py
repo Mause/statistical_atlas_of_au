@@ -19,7 +19,7 @@ PUNC = set('{},:')
 FORMATS = json.load(open('formats.json'))
 
 
-class AUXFile(namedtuple('AUXFile', 'version,rootEntry,mifDictionary')):
+class IMGFile(namedtuple('IMGFile', 'version,rootEntry,mifDictionary')):
     def __hash__(self):
         return hash(
             (
