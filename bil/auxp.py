@@ -196,6 +196,12 @@ class EntryParser:
 
 
 
+
+
+def determine_type(typ):
+    return 'L' if typ[0] == 't' else typ[0]
+
+
 def parse(filename):
     with open(filename, 'rb') as fh:
         label, ptr = struct.unpack('15sxcxxx', fh.read(20))
