@@ -231,7 +231,7 @@ class EntryParser:
             self.queue.put((ent, label, getattr(ent, label)))
 
 
-class MIF(namedtuple('MIF', 'struct_def,spec')):
+class MIF(namedtuple('MIF', 'name,struct_def,spec')):
 
     def _from_file(self, fh):
         data = self.struct_def.unpack_from(fh.read(self.struct_def.size))
@@ -254,7 +254,7 @@ def determine_type(typ):
 
 
 @lru_cache()
-def compile_mif(definition):
+def compile_mif(name, definition):
     tokens = list(to_tokens(definition))
     bits = OrderedDict(list(parse_to_struct(tokens)))
 
@@ -269,9 +269,14 @@ def compile_mif(definition):
     ]
 
     return MIF(
-        struct.Struct(''.join(parts)),
+        name,
+        struct.Struct('<' + ''.join(parts)),
         bits
     )
+
+
+def mif(name):
+    return compile_mif(name, FORMATS[name])
 
 
 def parse(filename):
