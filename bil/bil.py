@@ -95,8 +95,7 @@ def combine(resolved):
                     cube,
                     (x, y)
                 )
-            else:
-                x += 600
+            x += 600
         x = 0
         y += 600
 
