@@ -3,6 +3,7 @@ import json
 import struct
 import ctypes
 from queue import Queue
+from collections import OrderedDict
 
 base = (
     'D:\\stats_data\\cache\\saau\\sections\\'
@@ -213,8 +214,49 @@ class EntryParser:
 
 
 
+class MIF:
+    def __init__(self, struct_def, spec):
+        self.struct_def = struct_def
+        self.spec = spec
+
+    def _from_file(self, fh):
+        data = self.struct_def.unpack_from(fh.read(self.struct_def.size))
+
+        idx = 0
+        for length, spec in self.spec:
+            name = spec['name']
+            val = data[idx:idx+length]
+            if isinstance(val, tuple) and len(val) == 1:
+                val = val[0]
+            yield name, val
+            idx += length
+
+    def from_file(self, fh):
+        return dict(self._from_file(fh))
+
+
 def determine_type(typ):
     return 'L' if typ[0] == 't' else typ[0]
+
+
+def compile_mif(definition):
+    tokens = list(to_tokens(definition))
+    bits = OrderedDict(list(parse_to_struct(tokens)))
+
+    bits = list(bits.values())[0]
+
+    parts = [
+        '{}{}'.format(
+            '' if length == 1 else length,
+            spec['type']
+        )
+        for length, spec in bits
+    ]
+
+    return MIF(
+        struct.Struct(''.join(parts)),
+        bits
+    )
 
 
 def parse(filename):
