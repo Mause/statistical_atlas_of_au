@@ -46,6 +46,13 @@ class BadFormatString(Exception):
     pass
 
 
+def nc(tokens):
+    name = tokens.pop(0)
+    comma = tokens.pop(0)
+    assert comma == ','
+    return name
+
+
 def parse_to_struct(tokens):
     while tokens:
         token = tokens.pop(0)
@@ -65,28 +72,35 @@ def parse_to_struct(tokens):
             comma = tokens.pop(0)
 
             typ = determine_type(name)
-            if comma != ',':
-                # okay, multiple elements
+
+            if typ == 'o':
+                # okay, custom type
+                type_name = name[1:]
+
+                if type_name == 'Emif_String':
+                    typ = '16c'
+                else:
+                    raise Exception
+
+                yield (1, {'type': typ, 'name': nc(tokens)})
+
+            elif typ == 'e':
+                # okay, enum
 
                 n_elems = int(name[1:])
-
                 yield (
                     length,
-                    [
-                        {
-                            'type': name[0],
-                            'name': tokens.pop(0) or tokens.pop(0)
-                        }
-                        for _ in range(n_elems)
-                    ]
+                    {
+                        "type": "c",
+                        "values": [nc(tokens) for _ in range(n_elems)],
+                        "name": nc(tokens)
+                    }
                 )
-
-                assert tokens.pop(0) == ','
 
             else:
                 assert comma == ','
 
-                yield (length, [{'type': typ, 'name': name[1:]}])
+                yield (length, {'type': typ, 'name': name[1:]})
 
         else:
             raise BadFormatString(token)
