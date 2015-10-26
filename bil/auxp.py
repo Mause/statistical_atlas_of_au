@@ -178,35 +178,32 @@ class EntryParser:
         root.child.parent = None
         return root.child
 
+    def parse_data(self, typ, ptr):
+        if typ == 'Eimg_DependentFile':
+            __import__('ipdb').set_trace()
+        self.fh.seek(ptr)
+        data = mif(typ).from_file(self.fh)
+        print(typ, end=' ')
+        pprint(data)
+        return data
 
     def parse_entry(self, ptr, parent):
         if ptr in self.seen:
             return self.seen[ptr]
 
         self.fh.seek(ptr)
+        raw_entry = mif('Ehfa_Entry').from_file(self.fh)
 
-        (
-            nxt, prev, _, child, data, dataSize,
-            name, typ, modTime
-        ) = struct.unpack('IIIIIl64s32sL', self.fh.read(124))
+        raw_entry['name'] = clean_string(raw_entry['name'])
+        raw_entry['typ'] = clean_string(raw_entry.pop('type'))
 
-        self.fh.seek(data)
-        data = self.fh.read(dataSize)
-
-        name = self.clean_string(name)
-        typ = self.clean_string(typ)
-
-        ent = Entry(
-            nxt=nxt or None,
-            prev=prev or None,
-            parent=parent,
-            child=child or None,
-            data=data,
-            dataSize=dataSize,
-            name=name,
-            typ=typ,
-            modTime=modTime,
+        raw_entry['data'] = (
+            self.parse_data(raw_entry['typ'], raw_entry['data'])
+            if raw_entry['data'] != 0
+            else None
         )
+
+        ent = Entry(ptr, **raw_entry)
         self.seen[ptr] = ent
 
         self.enqueue(ent, 'next')
