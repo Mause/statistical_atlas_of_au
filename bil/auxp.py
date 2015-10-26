@@ -142,6 +142,12 @@ class EntryParser:
         while not self.queue.empty():
             dest, name, ptr = self.queue.get()
             setattr(dest, name, self.parse_entry(ptr, dest))
+            if name == 'child':
+                setattr(
+                    getattr(dest, name),
+                    'parent',
+                    dest
+                )
         root.child.parent = None
         return root.child
 
