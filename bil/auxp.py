@@ -39,14 +39,16 @@ MIF_DATA_TYPES = {
 }
 
 
+class BadFormatString(Exception):
+    pass
+
+
 def parse_to_struct(tokens):
     while tokens:
         token = tokens.pop(0)
         if token == '{':
             block = list(parse_to_struct(tokens))
-            name = tokens.pop(0)
-
-            assert tokens.pop(0) == ','
+            name = nc(tokens)
 
             yield (name, block)
 
@@ -83,7 +85,7 @@ def parse_to_struct(tokens):
                 yield (length, [{'type': name[0], 'name': name[1:]}])
 
         else:
-            raise Exception(token)
+            raise BadFormatString(token)
 
 
 class Entry:
