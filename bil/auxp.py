@@ -102,6 +102,24 @@ class Entry:
         self.typ = typ
         self.modTime = modTime
 
+    def __hash__(self):
+        return hash(self.ptr)
+        # return hash((
+        #     self.ptr,
+        #     self.next,
+        #     self.prev,
+        #     self.parent,
+        #     self.child,
+        #     self.data,
+        #     self.dataSize,
+        #     self.name,
+        #     self.typ,
+        #     self.modTime
+        # ))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
     __str__ = __repr__ = lambda self: '<Entry {} of type {}>'.format(
         self.name, self.typ
     )
@@ -186,44 +204,6 @@ def parse(filename):
 
         root = EntryParser(fh, rootEntryPtr).parse()
     return root
-
-
-def main():
-    root = parse(base + '.aux')
-    print(root)
-
-    nodes = Queue()
-    nodes.put(root)
-    names = set()
-    seen = set()
-    while not nodes.empty():
-        node = nodes.get()
-        if not isinstance(node, Entry) or node in seen:
-            continue
-        else:
-            seen.add(node)
-        names.add((node.typ, node.data))
-
-        if node.name == 'DependentLayerName':
-            import IPython
-            IPython.embed()
-
-        if node.prev:
-            nodes.put(node.prev)
-        if node.nxt:
-            nodes.put(node.nxt)
-        if node.child:
-            nodes.put(node.child)
-
-    from pprint import pprint
-    pprint(names)
-
-    # print(
-    #     freeList,
-    #     rootEntryPtr,
-    #     entryHeaderLength,
-    #     dictionaryPtr
-    # )
 
 
 def to_tokens(string):
