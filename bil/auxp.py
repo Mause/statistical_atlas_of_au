@@ -3,6 +3,7 @@ import json
 import struct
 import ctypes
 from queue import Queue
+from functools import lru_cache
 from collections import OrderedDict
 
 base = (
@@ -239,6 +240,7 @@ def determine_type(typ):
     return 'L' if typ[0] == 't' else typ[0]
 
 
+@lru_cache()
 def compile_mif(definition):
     tokens = list(to_tokens(definition))
     bits = OrderedDict(list(parse_to_struct(tokens)))
