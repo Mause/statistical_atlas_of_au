@@ -85,6 +85,10 @@ def move_old(filename):
 
 
 def unzip(path):
+    """
+    Unzips the specified zip file into the subdirectory of it's containing
+    directory. The directory containing the zip's contents is then returned.
+    """
     container = dirname(path)
 
     dest = join(container, splitext(basename(path))[0])
