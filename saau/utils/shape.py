@@ -1,8 +1,8 @@
 import os
-import logging
-import zipfile
-from os.path import splitext, join, basename, dirname, exists, isdir
+from os.path import splitext, join
 import cartopy.io.shapereader as shpreader
+
+from . import unzip
 
 
 def listdir_r(path):
@@ -21,16 +21,7 @@ def shape_from_zip(zip_filename, shape_filename=None):
     If shape_filename is None, we guess which shape file you want.
     """
 
-    container = dirname(zip_filename)
-
-    dest = join(container, splitext(basename(zip_filename))[0])
-
-    if not (exists(dest) and isdir(dest) and os.listdir(dest)):
-        logging.info("%s not yet extracted, extracting...", zip_filename)
-        os.makedirs(dest, exist_ok=True)
-
-        with zipfile.ZipFile(zip_filename) as zipper:
-            zipper.extractall(dest)
+    dest = unzip(zip_filename)
 
     if shape_filename is None:
         shape_filenames = [

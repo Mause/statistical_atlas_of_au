@@ -3,7 +3,9 @@ from contextlib import contextmanager
 from collections import namedtuple
 from functools import wraps
 from glob import iglob as glob
-from os.path import splitext
+from os.path import splitext, dirname, join, basename, exists, isdir
+import logging
+import zipfile
 import os
 
 import requests
@@ -80,3 +82,18 @@ def move_old(filename):
             ext
         )
     )
+
+
+def unzip(path):
+    container = dirname(path)
+
+    dest = join(container, splitext(basename(path))[0])
+
+    if not (exists(dest) and isdir(dest) and os.listdir(dest)):
+        logging.info("%s not yet extracted, extracting...", path)
+        os.makedirs(dest, exist_ok=True)
+
+        with zipfile.ZipFile(path) as zipper:
+            zipper.extractall(dest)
+
+    return dest
