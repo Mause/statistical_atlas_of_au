@@ -20,10 +20,6 @@ DYNAMIC_TABLE = {
 DYNAMIC_TABLE_R = {v: k for k, v in DYNAMIC_TABLE.items()}
 
 
-def get_towns():
-    return TownsData.instance().get_towns()
-
-
 class DummyRecord:
 
     def __init__(self, attributes, geometry):
