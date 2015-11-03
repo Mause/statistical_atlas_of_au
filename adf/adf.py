@@ -236,6 +236,7 @@ def parse_header(filename):
 
 
 class Adf:
+
     def __init__(self, directory):
         self.directory = directory
 

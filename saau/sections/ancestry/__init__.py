@@ -68,6 +68,7 @@ def get_data(country):
 
 
 class AncestryImageProvider(ImageProvider):
+
     def has_required_data(self):
         return self.data_dir_exists(self.filename)
 

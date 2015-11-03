@@ -20,6 +20,7 @@ FORMATS = json.load(open('formats.json'))
 
 
 class IMGFile(namedtuple('IMGFile', 'version,rootEntry,mifDictionary')):
+
     def __hash__(self):
         return hash(
             (
@@ -128,6 +129,7 @@ def parse_to_struct(tokens):
 
 
 class Entry:
+
     def __init__(self, ptr, next, prev, parent, child, data, dataSize, name,
                  typ, modTime):
         self.ptr = ptr  # essentially a unique identifier within the file
@@ -157,6 +159,7 @@ def clean_string(string):
 
 
 class EntryParser:
+
     def __init__(self, fh, root_ptr):
         self.fh = fh
         self.root_ptr = root_ptr
@@ -226,7 +229,7 @@ class MIF(namedtuple('MIF', 'name,struct_def,spec')):
         idx = 0
         for length, spec in self.spec:
             name = spec['name']
-            val = data[idx:idx+length]
+            val = data[idx:idx + length]
             if isinstance(val, tuple) and len(val) == 1:
                 val = val[0]
             yield name, val
