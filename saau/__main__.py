@@ -153,6 +153,8 @@ def build_image(prov, rerender_all):
 
         if exists(output_filename):
             logging.info('Render successful')
+        else:
+            logging.info('Render unsuccessful')
 
     except NotImplementedError:
         logging.exception("Can't render %s", get_name(prov))
