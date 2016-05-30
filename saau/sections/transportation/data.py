@@ -37,15 +37,8 @@ def pairs(iterator):
     [(0, 1), (1, 2)]
     """
     first, second = tee(iterator)
-    ret = zip(chain([None], second), first)
-
-    # this is a generator so that execution doesn't begin until the user
-    # starts consuming us, and so that we then don't start consuming our
-    # iterator until they ask us to
-
-    next(ret)  # kill the first half-empty pair
-
-    yield from ret
+    next(second)
+    yield from zip(first, second)
 
 
 def get_paths(request_layers):
