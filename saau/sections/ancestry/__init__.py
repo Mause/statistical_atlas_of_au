@@ -76,10 +76,11 @@ class AncestryImageProvider(ImageProvider):
         return self.save_json(self.filename, get_data(self.ancestry_name))
 
     def build_image(self):
-        data = abs_data_to_dataframe(self.load_json(self.filename))
+        data = abs_data_to_dataframe(
+            self.load_json(self.filename),
+            ['ANCP', 'FREQUENCY']
+        )
         data = data[data.pop('Time') == 2011]
-        del data['ANCP']
-        del data['FREQUENCY']
         del data['REGIONTYPE']
 
         lga_lookup = lambda code: self.services.lga.get('LGA_CODE11', code)
