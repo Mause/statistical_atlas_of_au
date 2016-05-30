@@ -2,9 +2,8 @@ import re
 import json
 import struct
 import ctypes
-from queue import Queue
 from functools import lru_cache
-from collections import namedtuple, OrderedDict
+from collections import namedtuple, OrderedDict, deque
 
 base = (
     'D:\\stats_data\\cache\\saau\\sections\\'
@@ -163,14 +162,14 @@ class EntryParser:
     def __init__(self, fh, root_ptr):
         self.fh = fh
         self.root_ptr = root_ptr
-        self.queue = Queue()
+        self.queue = deque()
         self.seen = {}
 
     def parse(self):
         root = type('', (), {'child': None})()
-        self.queue.put((root, 'child', self.root_ptr))
-        while not self.queue.empty():
-            dest, name, ptr = self.queue.get()
+        self.queue.append((root, 'child', self.root_ptr))
+        while self.queue:
+            dest, name, ptr = self.queue.pop()
             setattr(dest, name, self.parse_entry(ptr, dest))
             if name == 'child':
                 setattr(
@@ -217,7 +216,7 @@ class EntryParser:
 
     def enqueue(self, ent, label):
         if getattr(ent, label):
-            self.queue.put((ent, label, getattr(ent, label)))
+            self.queue.append((ent, label, getattr(ent, label)))
 
 
 class MIF(namedtuple('MIF', 'name,struct_def,spec')):
