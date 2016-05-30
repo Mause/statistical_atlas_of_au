@@ -205,18 +205,15 @@ class EntryParser:
             else None
         )
 
-        ent = Entry(ptr, **raw_entry)
-        self.seen[ptr] = ent
+        self.seen[ptr] = ent = Entry(ptr, **raw_entry)
 
-        self.enqueue(ent, 'next')
-        self.enqueue(ent, 'prev')
-        self.enqueue(ent, 'child')
+        for label in 'next', 'prev', 'child':
+            value = getattr(ent, label)
+            if value:
+                self.queue.append((ent, label, value))
 
         return ent
 
-    def enqueue(self, ent, label):
-        if getattr(ent, label):
-            self.queue.append((ent, label, getattr(ent, label)))
 
 
 class MIF(namedtuple('MIF', 'name,struct_def,spec')):
