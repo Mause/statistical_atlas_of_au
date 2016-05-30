@@ -2,6 +2,7 @@ import re
 import json
 import struct
 import ctypes
+from enum import Enum, EnumMeta
 from functools import lru_cache
 from collections import namedtuple, OrderedDict, deque
 
@@ -215,6 +216,35 @@ class EntryParser:
         return ent
 
 
+def slugify(string):
+    string = string.replace(' ', '_')
+    string = string.replace('-', '_')
+    return string
+
+
+class AttrDict(dict):
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError
+
+
+@lru_cache()
+def build_enum(name, values):
+
+    values = [slugify(value).upper() for value in values]
+    values = AttrDict(
+        zip(values, range(len(values))),
+        _member_names=values
+    )
+
+    return EnumMeta(
+        '{}Enum'.format(name.title()),
+        (Enum,),
+        values
+    )
+
 
 class MIF(namedtuple('MIF', 'name,struct_def,spec')):
     __str__ = lambda self: '<MIF {}>'.format(self.name)
@@ -228,6 +258,9 @@ class MIF(namedtuple('MIF', 'name,struct_def,spec')):
             val = data[idx:idx + length]
             if isinstance(val, tuple) and len(val) == 1:
                 val = val[0]
+            if 'values' in spec:
+                enum = build_enum(name, tuple(spec['values']))
+                val = enum(val[0])
             yield name, val
             idx += length
 
