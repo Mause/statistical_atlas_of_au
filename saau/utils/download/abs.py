@@ -2,6 +2,7 @@
 http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/0/5CB0F0C29CC07051CA25791F000F2D3A/$File/12160_local_government_area_structure.zip
 https://web.archive.org/web/20141026141936/http://stat.abs.gov.au/itt/r.jsp?api
 """
+import sys
 
 import pandas
 import requests
@@ -172,6 +173,9 @@ def abs_data_to_dataframe(data, delete_cols=None):
     )
 
 
+def main(argv=sys.argv[1:]):
+    introspect(argv[0])
+
+
 if __name__ == '__main__':
-    import sys
-    introspect(sys.argv[1])
+    main()
