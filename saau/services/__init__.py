@@ -29,7 +29,7 @@ class Services:
 
     def __getattr__(self, name):
         try:
-            # if isn't not already an attribute,
+            # if it's not already an attribute,
             # look it up and cache it
             value = self.services[name]
             setattr(self, name, value)
