@@ -1,6 +1,7 @@
 import logging
 from collections import namedtuple
 import pickle
+from os.path import basename
 
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
@@ -17,6 +18,10 @@ AUS_NW = LL(111.5, -1)
 AUS_SE = LL(155, -42)
 YELLOWED_PAPER = '#F1E4BB'
 
+"http://www.gadm.org/download"
+URL = 'http://biogeo.ucdavis.edu/data/gadm2.8/shp/AUS_adm_shp.zip'
+FILENAME = basename(URL)
+
 
 def get_states(services):
     geometries_cache = services.aus_map.data_dir_join('geometries.pickle')
@@ -29,7 +34,7 @@ def get_states(services):
         pass
 
     shpfile = shape_from_zip(
-        services.aus_map.data_dir_join("AUS_adm.zip"),
+        services.aus_map.data_dir_join(FILENAME),
         "AUS_adm1"
     )
 
@@ -96,13 +101,12 @@ class AusMap(RequiresData):
         return get_map(self.services, **kwargs)
 
     def has_required_data(self):
-        return self.data_dir_exists('AUS_adm.zip')
+        return self.data_dir_exists(FILENAME)
 
     def obtain_data(self):
-        "http://www.gadm.org/download"
         return get_binary(
-            'http://biogeo.ucdavis.edu/data/gadm2/shp/AUS_adm.zip',
-            self.data_dir_join('AUS_adm.zip')
+            URL,
+            self.data_dir_join(FILENAME)
         )
 
 
