@@ -120,11 +120,15 @@ def build_images(image_providers, rerender_all=False, threads=1):
     else:
         logging.info('Rendering images')
 
-    with PoolExecutor(threads) as exe:
-        exe.map(
-            lambda prov: build_image(prov, rerender_all),
-            image_providers
-        )
+    if threads == 1:
+        for prov in image_providers:
+            build_image(prov, rerender_all)
+    else:
+        with PoolExecutor(threads) as exe:
+            exe.map(
+                lambda prov: build_image(prov, rerender_all),
+                image_providers
+            )
 
     logging.info('Done.')
 
