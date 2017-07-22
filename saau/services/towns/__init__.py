@@ -127,16 +127,13 @@ class LocationConversion(RequiresData):
             if not self.data_dir_exists(filename)
         )
 
-    def __getattribute__(self, name):
-        try:
-            return super().__getattribute__(name)
-        except AttributeError:
-            pass
-
+    def __getattr__(self, name):
         if '_to_' in name:
-            setattr(self, name, self._dynamic(name))
-
-        return super().__getattribute__(name)
+            value = self._dynamic(name)
+            setattr(self, name, value)
+            return value
+        else:
+            raise AttributeError(name)
 
     def dynamic_by_name(self, ofrom_, oto_):
         ref = self.load_reference()
