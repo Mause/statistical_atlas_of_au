@@ -6,6 +6,7 @@ from . import unzip
 
 
 def listdir_r(path):
+    'Recursive listdir'
     for root, _, filenames in os.walk(path):
         for filename in filenames:
             yield join(root, filename)
