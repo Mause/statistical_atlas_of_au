@@ -97,7 +97,10 @@ def unzip(path):
         logging.info("%s not yet extracted, extracting...", path)
         os.makedirs(dest, exist_ok=True)
 
-        with zipfile.ZipFile(path) as zipper:
-            zipper.extractall(dest)
+        try:
+            with zipfile.ZipFile(path) as zipper:
+                zipper.extractall(dest)
+        except zipfile.BadZipfile as e:
+            raise Exception(path) from e
 
     return dest
