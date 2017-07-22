@@ -1,3 +1,4 @@
+import struct
 from functools import reduce
 from os.path import basename, splitext
 from functools import lru_cache
@@ -31,6 +32,10 @@ class DummyRecord:
     def __init__(self, attributes, geometry):
         self.attributes = attributes
         self.geometry = geometry
+
+
+class InvalidShapefile(Exception):
+    pass
 
 
 def try_int(v):
@@ -182,10 +187,18 @@ class RegionClassification(RequiresData):
     @lru_cache()
     def load_reference(self):
         shpfile = shape_from_zip(self.data_dir_join(self.filename))
-        return pandas.DataFrame([
-            dict(rec.attributes, rec=rec)
-            for rec in shpfile.records()
-        ]).convert_objects(convert_numeric=True)
+        try:
+            return pandas.DataFrame([
+                dict(rec.attributes, rec=rec)
+                for rec in shpfile.records()
+            ]).convert_objects(convert_numeric=True)
+
+        except struct.error as e:
+            raise InvalidShapefile(
+                self.data_dir_join(
+                    self.filename
+                )
+            ) from e
 
     def get(self, key, value):
         """
