@@ -1,7 +1,8 @@
 import logging
 import dill as pickle
-from itertools import count
 from os.path import join, exists, basename
+
+from tqdm import tqdm
 
 from ..image_provider import ImageProvider
 from ...utils.shape import shape_from_zip
@@ -50,22 +51,23 @@ def load_from_zips(data_dir):
 
     for shape in shapes:
         length = len(shape)
-        logging.info('Yielding')
 
         # stealing some logic from cartopy's shape.records()
         field_names = [field[0] for field in shape._reader.fields[1:]]
         geometry_factory = shape._geometry_factory
 
-        for idx, thing in zip(count(), shape._reader.iterShapeRecords()):
+        iterable = tqdm(
+            shape._reader.iterShapeRecords(),
+            total=length,
+            desc=shape
+        )
+
+        for thing in iterable:
             # geometry_factory is expensive, so we delay its use :P
             yield dict(
                 zip(field_names, thing.record),
                 geom=lambda: geometry_factory(thing.shape)
             )
-
-            if idx % 1000 == 0:
-                logging.info('%d/%d -> %f', idx, length, (idx / length * 100))
-        logging.info('Scary')
 
 
 def load_data(data_dir):
