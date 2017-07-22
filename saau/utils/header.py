@@ -16,8 +16,10 @@ def parse_lines(lines):
 
 
 def render_header_to(font, ax, sy, lines, sx=0.5):
-    calc = lambda q: q / 20
-    y_points = map(calc, np.arange(sy, 0, -0.5))
+    y_points = (
+        q / 20
+        for q in np.arange(sy, 0, -0.5)
+    )
 
     for y, (text, attrs) in zip(y_points, parse_lines(lines)):
         line = ax.figure.text(sx, y, text, ha='center')
