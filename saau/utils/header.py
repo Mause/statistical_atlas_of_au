@@ -1,5 +1,3 @@
-from operator import itemgetter
-
 import numpy as np
 from lxml.etree import fromstring, XMLSyntaxError
 
@@ -21,16 +19,9 @@ def render_header_to(font, ax, sy, lines, sx=0.5):
     calc = lambda q: q / 20
     y_points = map(calc, np.arange(sy, 0, -0.5))
 
-    parsed = list(parse_lines(lines))
-    lines = map(itemgetter(0), parsed)
-    line_attrs = map(itemgetter(1), parsed)
+    for y, (text, attrs) in zip(y_points, parse_lines(lines)):
+        line = ax.figure.text(sx, y, text, ha='center')
 
-    lines = [
-        ax.figure.text(sx, y, text, ha='center')
-        for y, text in zip(y_points, lines)
-    ]
-
-    for line, attrs in zip(lines, line_attrs):
         if 'b' in attrs:
             line.set_weight('extra bold')
             line.set_font_properties(font)
