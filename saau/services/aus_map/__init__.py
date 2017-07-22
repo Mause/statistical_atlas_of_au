@@ -70,7 +70,7 @@ def get_map(services, show_world=False, zorder=0):
 
     ax.background_patch.set_facecolor(YELLOWED_PAPER)
     ax.patch.set_facecolor(YELLOWED_PAPER)
-    ax.set_axis_bgcolor(YELLOWED_PAPER)
+    ax.set_facecolor(YELLOWED_PAPER)
 
     logging.info('Adding states to map')
     ax.add_geometries(
