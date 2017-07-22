@@ -36,6 +36,8 @@ def get_abs_csv(url, filename):
     assert r.ok, r.json()
     content = r.content
 
+    assert splitext(filename)[1] == '.csv'
+
     with ZipFile(BytesIO(content)) as ziper:
         data = ziper.read(ziper.namelist()[0])
 
