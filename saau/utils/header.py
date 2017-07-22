@@ -30,12 +30,12 @@ def render_header_to(font, ax, sy, lines, sx=0.5):
         for y, text in zip(y_points, lines)
     ]
 
-    for idx, attrs in enumerate(line_attrs):
+    for line, attrs in zip(lines, line_attrs):
         if 'b' in attrs:
-            lines[idx].set_weight('extra bold')
-            lines[idx].set_font_properties(font)
-            lines[idx].set_fontsize(25)
+            line.set_weight('extra bold')
+            line.set_font_properties(font)
+            line.set_fontsize(25)
         if 'i' in attrs:
-            lines[idx].set_style('italic')
+            line.set_style('italic')
 
     return ax
