@@ -3,6 +3,12 @@ from ..utils import get_name
 
 
 def build_name(serv):
+    """
+    Determines a name for a service.
+
+    If it already has a `service_name` attribute, use that, otherwise
+    convert the class name to dead-snake case.
+    """
     if hasattr(serv, 'service_name'):
         return serv.service_name
 
