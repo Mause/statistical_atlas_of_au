@@ -54,6 +54,7 @@ def main(services, data_dir):
     cb.set_label('Population')
 
     return render_header_to(
+        services.fonts.get_font(),
         aus_map,
         19.5,
         [

@@ -48,6 +48,7 @@ class HayImageProvider(LandcoverImageProvider):
         )
 
         return render_header_to(
+            self.services.fonts.get_font(),
             aus_map,
             19.5,
             [

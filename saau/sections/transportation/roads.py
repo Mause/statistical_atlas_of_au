@@ -8,6 +8,7 @@ class RoadImageProvider(TransportationImageProvider):
 
     def build_image(self):
         return render_header_to(
+            self.services.fonts.get_font(),
             super().build_image(),
             19.5,
             [

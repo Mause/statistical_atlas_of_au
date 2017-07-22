@@ -128,6 +128,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
         aus_map = self.render_map(data)
 
         return render_header_to(
+            self.services.fonts.get_font(),
             aus_map,
             19.25,
             lines=[
