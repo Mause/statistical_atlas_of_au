@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from collections import namedtuple
 from functools import wraps
 from glob import iglob as glob
-from os.path import splitext, dirname, join, basename, exists, isdir
+from os.path import splitext, exists, isdir
 import logging
 import zipfile
 import os
@@ -89,9 +89,7 @@ def unzip(path):
     Unzips the specified zip file into the subdirectory of it's containing
     directory. The directory containing the zip's contents is then returned.
     """
-    container = dirname(path)
-
-    dest = join(container, splitext(basename(path))[0])
+    dest = splitext(path)[0]
 
     if not (exists(dest) and isdir(dest) and os.listdir(dest)):
         logging.info("%s not yet extracted, extracting...", path)
