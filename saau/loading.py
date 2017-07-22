@@ -36,8 +36,10 @@ def load_providers(filter_pattern, attr_name, package_name):
     top_level = [
         package
         for package in packages
-        if package.__name__.count('.') == 2
-        and basename(package.__file__) == '__init__.py'
+        if (
+            package.__name__.count('.') == 2 and
+            basename(package.__file__) == '__init__.py'
+        )
     ]
 
     if not filter_pattern:
