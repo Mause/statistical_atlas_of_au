@@ -9,8 +9,9 @@ def parse_lines(lines):
         except XMLSyntaxError:
             attrs = []
         else:
-            attrs = [thing.tag for thing in xml_line.getiterator()]
-            line = list(xml_line.getiterator())[-1].text
+            line = list(xml_line.getiterator())
+            attrs = [thing.tag for thing in line]
+            line = line[-1].text
 
         yield line, attrs
 
