@@ -19,6 +19,12 @@ DYNAMIC_TABLE = {
 }
 DYNAMIC_TABLE_R = {v: k for k, v in DYNAMIC_TABLE.items()}
 
+ausstats = (
+    'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
+    '0/{}/$File/{}.zip'
+    .format
+)
+
 
 class DummyRecord:
 
@@ -76,23 +82,18 @@ def combine_towns(towns):
 
 
 class LocationConversion(RequiresData):
-    fmt = (
-        'http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/'
-        '0/{}/$File/{}.zip'
-    )
-
     urls = [
-        fmt.format(
+        ausstats(
             '5CB0F0C29CC07051CA25791F000F2D3A',
             '12160_local_government_area_structure'
         ),
 
-        fmt.format(
+        ausstats(
             'C468E0C71D4701D1CA257801000C6A58',
             '1270055001_sa3_2011_aust_csv'
         ),
 
-        fmt.format(
+        ausstats(
             '0C1F9B2158B14477CA257801000C6A3B',
             '1270055001_sa2_2011_aust_csv'
         )
@@ -198,26 +199,23 @@ class RegionClassification(RequiresData):
 
 
 class SA3(RegionClassification):
-    url = (
-        'http://www.abs.gov.au/ausstats/subscriber.nsf/'
-        '0/7130A5514535C5FCCA257801000D3FBD/'
-        '$File/1270055001_sa2_2011_aust_shape.zip'
+    url = ausstats(
+        '7130A5514535C5FCCA257801000D3FBD',
+        '1270055001_sa2_2011_aust_shape'
     )
 
 
 class LGA(RegionClassification):
-    url = (
-        'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
-        '0/03275B7661181087CA2578CC001223EA/'
-        '$File/1259030001_lga11aaust_shape.zip'
+    url = ausstats(
+        '03275B7661181087CA2578CC001223EA',
+        '1259030001_lga11aaust_shape'
     )
 
 
 class SA4(RegionClassification):
-    url = (
-        'http://www.ausstats.abs.gov.au/ausstats/subscriber.nsf/'
-        '0/B18D49356F3FDA5FCA257801000D6D2E/'
-        '$File/1270055001_sa4_2011_aust_shape.zip'
+    url = ausstats(
+        'B18D49356F3FDA5FCA257801000D6D2E',
+        '1270055001_sa4_2011_aust_shape'
     )
 
 
