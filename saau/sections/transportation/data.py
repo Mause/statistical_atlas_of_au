@@ -9,22 +9,25 @@ import numpy as np
 
 
 def get_layers(service):
-    return dict(zip(service.layernames, service.layers))
+    layers = service.layers
+    return {
+        layer.name: layer
+        for layer in layers
+    }
 
 
-def mend(env):
-    env.wkid = env.spatialReference.wkid
-    return env
+def mend_extent(extent):
+    extent.wkid = extent.spatialReference.wkid
+    return extent
 
 
 def get_data(requested_layers):
-    catalog = Catalog('http://www.ga.gov.au/gis/rest/services/')
-    topography = catalog['topography']
-    service = topography['Dynamic_National_Map_Transport']
+    catalog = Catalog('http://services.ga.gov.au/site_7/rest/services')
+    service = catalog['NM_Transport_Infrastructure']
     layers = get_layers(service)
 
     return chain.from_iterable(
-        layer.QueryLayer(Geometry=mend(layers[layer].extent))
+        layers[layer].QueryLayer(Geometry=mend_extent(layers[layer].extent))
         for layer in requested_layers
     )
 
