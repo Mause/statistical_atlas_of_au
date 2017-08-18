@@ -4,7 +4,7 @@ import logging
 from shutil import copyfileobj
 from zipfile import ZipFile
 from io import BytesIO
-from os.path import exists
+from os.path import exists, splitext
 
 IMAGES = []
 
