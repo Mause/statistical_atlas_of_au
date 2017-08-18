@@ -12,12 +12,12 @@ DATA_URLS = [
     "http://data.daff.gov.au/data/warehouse/lusag4l___001/SA_shape.zip",
     "http://data.daff.gov.au/data/warehouse/luvicg2ev__002/"
     "VLUIS_2010_v4_convertedtoALUM_201409.zip",
-    "http://www.daff.gov.au/abares/aclump/Documents/"
+    "http://www.agriculture.gov.au/abares/aclump/Documents/"
     "tas-land-use-summer-2009-10-geodatabase.zip",
-    "http://www.daff.gov.au/abares/aclump/Documents/Lump_BRS_11aug08_g94.zip",
-    "http://www.daff.gov.au/abares/aclump/Documents/Southeast_SA_landuse.zip",
-    "http://www.daff.gov.au/abares/aclump/Documents/WA_CapetoCape_landuse.zip",
-    "http://www.daff.gov.au/abares/aclump/Documents/WA_shape.zip",
+    "http://www.agriculture.gov.au/abares/aclump/Documents/Lump_BRS_11aug08_g94.zip",
+    "http://www.agriculture.gov.au/abares/aclump/Documents/Southeast_SA_landuse.zip",
+    "http://www.agriculture.gov.au/abares/aclump/Documents/WA_CapetoCape_landuse.zip",
+    "http://www.agriculture.gov.au/abares/aclump/Documents/WA_shape.zip",
     "http://data.daff.gov.au/data/warehouse/lunswg1e___001/NSW_shape.zip",
 ]
 FILENAMES = list(map(basename, DATA_URLS))
