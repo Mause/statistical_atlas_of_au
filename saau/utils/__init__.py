@@ -102,3 +102,13 @@ def unzip(path):
             raise Exception(path) from e
 
     return dest
+
+
+@contextmanager
+def disable_logging():
+    logging.disable(sys.maxsize)
+    try:
+        yield
+    finally:
+        logging.disable(logging.NOTSET)
+
