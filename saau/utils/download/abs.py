@@ -3,6 +3,7 @@ http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/0/5CB0F0C29CC07051CA25791
 https://web.archive.org/web/20141026141936/http://stat.abs.gov.au/itt/r.jsp?api
 """
 import sys
+from functools import lru_cache
 
 import pandas
 import requests
@@ -45,14 +46,17 @@ def introspect(datasetid):
         input()
 
 
+@lru_cache()
 def get_dataset_list():
     return query('GetDatasetList', {})
 
 
+@lru_cache()
 def get_dataset_concepts(datasetid):
     return query('GetDatasetConcepts', {'datasetid': datasetid})
 
 
+@lru_cache()
 def get_codelist_value(datasetid, concept, code=None, relationship=None):
     assert concept.isupper(), 'Concepts are case sensitive'
     if relationship is not None:
