@@ -3,6 +3,7 @@ http://www.ausstats.abs.gov.au/Ausstats/subscriber.nsf/0/5CB0F0C29CC07051CA25791
 https://web.archive.org/web/20141026141936/http://stat.abs.gov.au/itt/r.jsp?api
 """
 import sys
+from itertools import chain
 from functools import lru_cache
 
 import pandas
@@ -46,6 +47,33 @@ def introspect(datasetid):
         input()
 
 
+def validate_query(datasetid, and_=None, or_={}):
+    datasets = get_dataset_list()
+    datasets = [dataset['id'] for dataset in datasets['datasets']]
+    assert datasetid in datasets
+    concepts = get_dataset_concepts(datasetid)['concepts']
+
+    and_ = and_ or []
+    or_ = or_ or []
+
+    if isinstance(and_, list):
+        and_ = [filt.split('.') for filt in and_]
+    if isinstance(or_, list):
+        or_ = [filt.split('.') for filt in or_]
+    if isinstance(and_, dict):
+        and_ = list(and_.items())
+    if isinstance(or_, dict):
+        or_ = list(or_.items())
+
+    for key, value in chain(and_, or_):
+        assert key in concepts
+        valid = [
+            code['code']
+            for code in get_codelist_value(datasetid, key)['codes']
+        ]
+        assert value in valid, '{} not in {}'.format(value, valid)
+
+
 @lru_cache()
 def get_dataset_list():
     return query('GetDatasetList', {})
@@ -84,7 +112,7 @@ commas = ','.join
 
 def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
                      end=None, top=None, bottom=None, series=None,
-                     format='json'):
+                     format='json', validate=True):
     """
     :param datasetid: Any dataset ID in ABS.Stat. These can be retrieved using
                       the GetDatasetList method.
@@ -119,6 +147,9 @@ def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
                    2010
     :param format: see elsewhere
     """
+
+    if validate:
+        validate_query(datasetid, and_, or_)
 
     assert isinstance(top, (NoneType, int))
     assert isinstance(bottom, (NoneType, int))
