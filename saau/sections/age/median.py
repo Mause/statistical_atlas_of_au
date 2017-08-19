@@ -44,7 +44,7 @@ class MedianAgeImageProvider(ImageProvider):
         return self.save_json(FILENAME, data)
 
     def region_lookup(self, sa3):
-        return self.services.sa3.get('SA3_CODE11', int(sa3))
+        return self.services.sa3.get('SA2_MAIN11', int(sa3))
 
     def build_image(self):
         colors = get_cmap('Purples')
