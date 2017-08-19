@@ -1,4 +1,4 @@
-from operator import attrgetter, itemgetter
+from operator import itemgetter
 from itertools import chain
 
 from ...utils.py3_hook import with_hook
@@ -35,9 +35,11 @@ def get_data(requested_layers):
 def get_paths(request_layers):
     paths = get_data(request_layers)
     paths = map(itemgetter('geometry'), paths)
-    paths = filter(lambda path: hasattr(path, 'paths'), paths)
-    paths = map(attrgetter('paths'), paths)
-    paths = chain.from_iterable(paths)
+    paths = chain.from_iterable(
+        geometry.paths
+        for geometry in paths
+        if hasattr(geometry, 'paths')
+    )
 
     return np.array([
         tuple(
