@@ -117,7 +117,7 @@ class IndustryImageProvider(ImageProvider):
 
     def build_image(self):
         data = self.load_data()
-        data = data[data.Year == 2011]
+        data = data[data.Year == 2013]
 
         # preload reference
         self.services.lga.load_reference()
