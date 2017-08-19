@@ -102,7 +102,6 @@ class IndustryImageProvider(ImageProvider):
         for key in df:
             if key.startswith('REGISTERED MOTOR VEHICLES - '):
                 del df[key]
-        # __import__('ipdb').set_trace()
         return df.rename(columns={
             k: (
                 k.split('-')[1].strip() if '-' in k
