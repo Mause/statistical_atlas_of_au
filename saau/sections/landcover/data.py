@@ -59,7 +59,7 @@ def load_from_zips(data_dir):
         iterable = tqdm(
             shape._reader.iterShapeRecords(),
             total=length,
-            desc=shape
+            desc=basename(shape._reader.shapeName)
         )
 
         for thing in iterable:
