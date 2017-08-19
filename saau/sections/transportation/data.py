@@ -1,10 +1,10 @@
 from operator import attrgetter, itemgetter
 from itertools import chain, tee
 
-import sys
-sys.path.insert(0, 'C:\\Users\\Dominic\\Dropbox\\temp\\arcrest')
+from ...utils.py3_hook import with_hook
 
-from arcrest import Catalog
+with with_hook():
+    from arcrest import Catalog
 import numpy as np
 
 
