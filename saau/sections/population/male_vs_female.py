@@ -51,8 +51,8 @@ class MaleVSFemaleImageProvider(ImageProvider):
     def load_data(self):
         df = abs_data_to_dataframe(self.load_json(FILENAME))
 
-        df.SEX = (
-            df.SEX
+        df.SEX_ABS = (
+            df.SEX_ABS
             .replace(
                 [1, 2, 3],
                 ['Males', 'Females', 'Persons']
@@ -60,8 +60,8 @@ class MaleVSFemaleImageProvider(ImageProvider):
             .astype('category')
         )
         df.rename(columns={
-            'LGA_REGION': 'Location',
-            'SEX': 'Sex'
+            'LGA_2013': 'Location',
+            'SEX_ABS': 'Sex'
         }, inplace=True)
 
         df = df[~(
