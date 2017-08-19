@@ -157,7 +157,7 @@ class IndustryImageProvider(ImageProvider):
             title='Industries'
         )
 
-        fig.tight_layout()
+        fig.tight_layout(h_pad=0.5)
         fig.set_size_inches(16, 9)
 
         return fig
