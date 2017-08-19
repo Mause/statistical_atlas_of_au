@@ -1,4 +1,4 @@
-from os.path import basename
+from os.path import basename, splitext
 
 import pandas
 import numpy as np
@@ -13,7 +13,7 @@ url = (
     '0/795163C2711B071BCA257E7000151A77/'
     '$File/1379055001_industry_2009-2013_lga_201506.zip'
 )
-filename = basename(url)
+filename = splitext(basename(url))[0] + '.csv'
 
 STATES = {
     0: "Australia",
