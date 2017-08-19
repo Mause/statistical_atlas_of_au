@@ -1,5 +1,5 @@
 from operator import attrgetter, itemgetter
-from itertools import chain, tee
+from itertools import chain
 
 from ...utils.py3_hook import with_hook
 
@@ -30,18 +30,6 @@ def get_data(requested_layers):
         layers[layer].QueryLayer(Geometry=mend_extent(layers[layer].extent))
         for layer in requested_layers
     )
-
-
-def pairs(iterator):
-    """
-    Returns the items in the iterator pairwise, like so;
-
-    >>> list(pairs([0, 1, 2]))
-    [(0, 1), (1, 2)]
-    """
-    first, second = tee(iterator)
-    next(second)
-    yield from zip(first, second)
 
 
 def get_paths(request_layers):
