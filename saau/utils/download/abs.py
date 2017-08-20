@@ -22,10 +22,14 @@ def query(method, params):
         'method': method,
         'format': 'json'
     })
-    datum = requests.get(
+    r = requests.get(
         BASE,
         params=params
-    ).json()
+    )
+    if r.url.endswith('unavailable'):
+        raise ABSException("Service currently down")
+
+    datum = r.json()
 
     if 'exception' in datum:
         raise ABSException(datum['exception'])
