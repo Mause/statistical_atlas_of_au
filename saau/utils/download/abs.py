@@ -112,7 +112,7 @@ commas = ','.join
 
 def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
                      end=None, top=None, bottom=None, series=None,
-                     format='json', validate=True):
+                     format='json'):
     """
     :param datasetid: Any dataset ID in ABS.Stat. These can be retrieved using
                       the GetDatasetList method.
@@ -147,9 +147,7 @@ def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
                    2010
     :param format: see elsewhere
     """
-
-    if validate:
-        validate_query(datasetid, and_, or_)
+    validate_query(datasetid, and_, or_)
 
     assert isinstance(top, (NoneType, int))
     assert isinstance(bottom, (NoneType, int))
