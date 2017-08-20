@@ -40,8 +40,8 @@ def generate():
         for age in RANGES[::, 1]:
             for gender in ['Males', 'Females']:
                 yield {
-                    'total_bill': random.randint(10, 100),
-                    'day': state,
+                    'frequency': random.randint(10, 100),
+                    'state': state,
                     'sex': gender
                 }
 
@@ -60,11 +60,11 @@ class DetailedAgeImageProvider(ImageProvider):
         ]
 
         for idx, subax in enumerate(ax):
-            to_display = data[data.day.isin(state_rows[idx])]
+            to_display = data[data.state.isin(state_rows[idx])]
             sns.violinplot(
                 ax=subax,
-                x="day",
-                y="total_bill",
+                x="state",
+                y="frequency",
                 hue="sex",
                 data=to_display,
                 palette="Set2",
