@@ -25,9 +25,9 @@ jobs:
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pipenv
-      - name: Preinstall cython
+      - name: Preinstall
         run: |
-          pipenv run pip install cython
+          pipenv run pip install cython numpy
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
