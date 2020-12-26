@@ -9,24 +9,13 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - 3.8
           - 3.9
-          # - 3.10-dev
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-        if: "!endsWith(matrix.python-version, '-dev')"
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: deadsnakes/action@v1.0.0
-        if: endsWith(matrix.python-version, '-dev')
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dev dependencies
-        if: endsWith(matrix.python-version, '-dev')
-        run: |
-          sudo apt install libxml2-dev libxslt-dev
       - name: Cache pipenv virtualenv
         id: cache-pipenv
         uses: actions/cache@v2
@@ -36,6 +25,9 @@ jobs:
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pipenv
+      - name: Preinstall cython
+        run: |
+          pipenv run pip install cython
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
