@@ -20,12 +20,11 @@ def build_name(serv):
     ).lower().strip('_')
 
 
-class Services:
-    __str__ = __repr__ = lambda self: (
-        '<Services times {}>'.format(len(self.services))
-    )
-
+class Services(object):
     services: Dict[str, Any]
+
+    def __repr__(self):
+        return '<Services times {}>'.format(len(self.services))
 
     def inject(self, services):
         self.services = {build_name(serv): serv for serv in services}
