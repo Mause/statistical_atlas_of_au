@@ -49,9 +49,19 @@ jobs:
         env:
           CLOUDAMQP_URL: "https://hello"
           TMDB_API_KEY: word
-      - name: Archive test report
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: report.html
-          path: report.html
+      - name: Import saau
+        run: |
+          pipenv run python -c "import saau"
+      # - name: Archive test report
+      #   uses: actions/upload-artifact@v1
+      #   if: always()
+      #   with:
+      #     name: report.html
+      #     path: report.html
+
+  run_saau:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run saau
+        run: |
+          pipenv run python -m saau
