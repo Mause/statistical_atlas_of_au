@@ -59,11 +59,15 @@ jobs:
       #     name: report.html
       #     path: report.html
 
-  run_saau:
-    if: never()
-    runs-on: ubuntu-latest
-    needs: build_backend
-    steps:
-      - name: Run saau
-        run: |
-          pipenv run python -m saau
+  # run_saau:
+  #   if: never()
+  #   runs-on: ubuntu-latest
+  #   needs: build_backend
+  #   steps:
+  #     - name: Download saau
+  #       uses: actions/download-artifact@v1
+  #       with:
+  #           name: saau.whl
+  #     - name: Run saau
+  #       run: |
+  #         pipenv run python -m saau
