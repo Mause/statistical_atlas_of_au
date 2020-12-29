@@ -2,6 +2,7 @@ import re
 import json
 import struct
 import ctypes
+from pprint import pprint
 from enum import Enum, EnumMeta
 from functools import lru_cache
 from collections import namedtuple, OrderedDict, deque
