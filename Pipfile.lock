@@ -48,9 +48,9 @@
         },
         "cartopy": {
             "hashes": [
-                "sha256:f23dffa101f43dd91e866a49ebb5f5048be2a24ab8a921a5c07edabde746d9a4"
+                "sha256:7ffa317e8f8011e0d965a3ef1179e57a049f77019867ed677d49dcc5c0744434"
             ],
-            "version": "==0.16.0"
+            "version": "==0.18.0"
         },
         "certifi": {
             "hashes": [
