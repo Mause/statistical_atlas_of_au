@@ -6,11 +6,14 @@ from typing import Any, Union
 
 from ..services import Services
 
-PathOrStr = Union[str,Path]
+PathOrStr = Union[str, Path]
 
 
 def not_implemented():
-    frame_info = inspect.currentframe().f_back
+    frame = inspect.currentframe()
+    assert frame
+    frame_info = frame.f_back
+    assert frame_info
     msg = ''
 
     if 'self' in frame_info.f_locals:

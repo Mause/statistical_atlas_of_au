@@ -1,6 +1,7 @@
 from functools import reduce
 from operator import itemgetter
 from itertools import chain
+from typing import List
 
 from arcrest import Catalog, gptypes
 import numpy as np
@@ -21,7 +22,7 @@ def mend_extent(extent):
     return extent
 
 
-def get_data(requested_layers):
+def get_data(requested_layers: List[str]):
     catalog = Catalog('http://services.ga.gov.au/site_7/rest/services')
     service = catalog['NM_Transport_Infrastructure']
     layers = get_layers(service)
@@ -32,7 +33,7 @@ def get_data(requested_layers):
     )
 
 
-def get_paths(request_layers):
+def get_paths(request_layers: List[str]) -> np.array:
     paths = get_data(request_layers)
     paths = map(itemgetter('geometry'), paths)
     paths = chain.from_iterable(
