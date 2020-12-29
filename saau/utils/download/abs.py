@@ -9,7 +9,7 @@ from functools import lru_cache
 import pandas
 import requests
 
-BASE = 'http://stat.abs.gov.au/itt/query.jsp'
+BASE = 'https://itt.abs.gov.au/itt/query.jsp'
 
 
 class ABSException(Exception):
