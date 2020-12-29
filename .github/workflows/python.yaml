@@ -51,7 +51,7 @@ jobs:
       #     TMDB_API_KEY: word
       - name: Import saau
         run: |
-          pipenv run python -c "import saau"
+          pipenv run python -c "import saau; print(saau)"
       # - name: Archive test report
       #   uses: actions/upload-artifact@v1
       #   if: always()
@@ -60,6 +60,7 @@ jobs:
       #     path: report.html
 
   run_saau:
+    if: never()
     runs-on: ubuntu-latest
     needs: build_backend
     steps:
