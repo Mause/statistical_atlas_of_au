@@ -20,7 +20,7 @@ FILENAME = basename(URL)
 
 def load_data(self):
     dest = unzip(self.data_dir_join(FILENAME))
-    path = join(dest, "globalmap2001\Raster\elevation")
+    path = join(dest, "globalmap2001/Raster/elevation")
 
     for filename in glob(join(path, '*.bil')):
         yield rasterio.open(filename)
