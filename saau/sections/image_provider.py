@@ -3,6 +3,7 @@ import json
 from os.path import exists, join
 from pathlib import Path
 from typing import Any, Union
+from abc import ABC, abstractmethod
 
 from ..services import Services
 
@@ -28,11 +29,12 @@ def not_implemented():
     return NotImplementedError(msg)
 
 
-class RequiresData:
+class RequiresData(ABC):
     def __init__(self, data_dir: Path, services: Services) -> None:
         self.data_dir = data_dir
         self.services = services
 
+    @abstractmethod
     def has_required_data(self) -> bool:
         raise not_implemented()
 
@@ -56,5 +58,6 @@ class RequiresData:
 
 
 class ImageProvider(RequiresData):
+    @abstractmethod
     def build_image(self) -> str:
         raise not_implemented()
