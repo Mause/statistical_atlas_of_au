@@ -5,9 +5,9 @@ from shutil import copyfileobj
 from zipfile import ZipFile
 from io import BytesIO
 from os.path import exists, splitext
-from typing import List, Any
+from typing import List
 
-IMAGES: List[Any] = []
+IMAGES: List[str] = []
 
 
 def get_binary(url, filename):
