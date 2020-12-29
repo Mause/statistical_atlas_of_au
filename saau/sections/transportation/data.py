@@ -1,11 +1,11 @@
+from functools import reduce
 from operator import itemgetter
 from itertools import chain
 
-from ...utils.py3_hook import with_hook
-
-with with_hook():
-    from arcrest import Catalog
+from arcrest import Catalog, gptypes
 import numpy as np
+
+gptypes.reduce = reduce
 
 
 def get_layers(service):

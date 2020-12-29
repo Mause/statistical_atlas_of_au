@@ -1,5 +1,4 @@
 import os
-import sys
 import types
 import logging
 import warnings
@@ -14,7 +13,6 @@ CACHE = join(STATS_DATA, 'cache')
 OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
 logging.basicConfig(level=logging.DEBUG)
-sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .services import Services
 from .utils import get_name, move_old
