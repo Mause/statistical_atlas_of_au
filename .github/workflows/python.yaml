@@ -28,7 +28,7 @@ jobs:
       - name: Preinstall
         run: |
           pipenv run pip install cython numpy
-          sudo apt install libopenblas-dev libgdal26
+          sudo apt install libopenblas-dev libgdal-dev
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
