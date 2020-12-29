@@ -1,5 +1,5 @@
-from typing import List, Any
+from typing import List
 
-IMAGES: List[Any] = [
+IMAGES: List[str] = [
     # 'cognitive.CognitiveDisabilityImageProvider'
 ]
