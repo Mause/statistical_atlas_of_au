@@ -1,5 +1,6 @@
 import re
 from ..utils import get_name
+from typing import Any, Dict
 
 
 def build_name(serv):
@@ -23,6 +24,8 @@ class Services:
     __str__ = __repr__ = lambda self: (
         '<Services times {}>'.format(len(self.services))
     )
+
+    services: Dict[str, Any]
 
     def inject(self, services):
         self.services = {build_name(serv): serv for serv in services}
