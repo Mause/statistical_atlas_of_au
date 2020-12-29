@@ -1,4 +1,3 @@
-import sys
 import humanize
 import requests
 import logging
