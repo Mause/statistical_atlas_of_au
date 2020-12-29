@@ -28,6 +28,7 @@ jobs:
       - name: Preinstall
         run: |
           pipenv run pip install cython numpy
+          apt install libopenblas-dev
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
