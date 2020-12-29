@@ -4,6 +4,7 @@ verify_ssl = true
 
 [dev-packages]
 ipdb = "*"
+mypy = "*"
 
 [packages]
 requests = "*"
@@ -19,3 +20,5 @@ tqdm = "*"
 auto2to3 = "*"
 rasterio = "*"
 arcrest = "*"
+cython = "*"
+numpy = "*"

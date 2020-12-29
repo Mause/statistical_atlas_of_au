@@ -10,7 +10,6 @@ import pandas
 import requests
 
 BASE = 'http://stat.abs.gov.au/itt/query.jsp'
-NoneType = type(None)
 
 
 class ABSException(Exception):
@@ -153,8 +152,8 @@ def get_generic_data(datasetid, and_, or_=None, orParent=None, start=None,
     """
     validate_query(datasetid, and_, or_)
 
-    assert isinstance(top, (NoneType, int))
-    assert isinstance(bottom, (NoneType, int))
+    assert top is None or isinstance(top, int)
+    assert bottom is None or isinstance(bottom, int)
 
     assert isinstance(format, str)
     assert format in {

@@ -20,7 +20,7 @@ DATA_URLS = [
     "http://www.agriculture.gov.au/abares/aclump/Documents/WA_shape.zip",
     "http://data.daff.gov.au/data/warehouse/lunswg1e___001/NSW_shape.zip",
 ]
-FILENAMES = list(map(basename, DATA_URLS))
+FILENAMES = [basename(url) for url in DATA_URLS]
 CACHE_FILENAME = 'cached_records.pickle'
 
 
