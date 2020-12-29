@@ -26,7 +26,6 @@ jobs:
         run: |
           python -m pip install --upgrade pipenv
       - name: Preinstall
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv run pip install cython numpy
           sudo apt install libopenblas-dev libgdal-dev
