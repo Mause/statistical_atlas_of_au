@@ -1,6 +1,12 @@
-import json
 import inspect
-from os.path import join, exists
+import json
+from os.path import exists, join
+from pathlib import Path
+from typing import Any, Union
+
+from ..services import Services
+
+PathOrStr = Union[str,Path]
 
 
 def not_implemented():
@@ -20,34 +26,32 @@ def not_implemented():
 
 
 class RequiresData:
-
-    def __init__(self, data_dir, services):
+    def __init__(self, data_dir: Path, services: Services) -> None:
         self.data_dir = data_dir
         self.services = services
 
-    def has_required_data(self):
+    def has_required_data(self) -> bool:
         raise not_implemented()
 
-    def obtain_data(self):
+    def obtain_data(self) -> bool:
         raise not_implemented()
 
-    def data_dir_exists(self, name):
+    def data_dir_exists(self, name: PathOrStr) -> bool:
         return exists(self.data_dir_join(name))
 
-    def data_dir_join(self, name):
+    def data_dir_join(self, name: PathOrStr) -> str:
         return join(self.data_dir, name)
 
-    def save_json(self, name, data):
+    def save_json(self, name: PathOrStr, data: Any) -> bool:
         with open(self.data_dir_join(name), 'w') as fh:
             json.dump(data, fh, indent=4)
         return True
 
-    def load_json(self, name):
+    def load_json(self, name: PathOrStr) -> Any:
         with open(self.data_dir_join(name)) as fh:
             return json.load(fh)
 
 
 class ImageProvider(RequiresData):
-
-    def build_image(self):
+    def build_image(self) -> str:
         raise not_implemented()
