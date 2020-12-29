@@ -43,12 +43,12 @@ jobs:
       - name: Run mypy
         run: |
           pipenv run mypy .
-      - name: Test with pytest
-        run: |
-          pipenv run pytest -vv
-        env:
-          CLOUDAMQP_URL: "https://hello"
-          TMDB_API_KEY: word
+      # - name: Test with pytest
+      #   run: |
+      #     pipenv run pytest -vv
+      #   env:
+      #     CLOUDAMQP_URL: "https://hello"
+      #     TMDB_API_KEY: word
       - name: Import saau
         run: |
           pipenv run python -c "import saau"
