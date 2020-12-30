@@ -12,7 +12,7 @@ with with_hook():
 import numpy as np
 
 
-cgi.parse_qs = parse_qs
+cgi.parse_qs = parse_qs  # type: ignore
 
 
 def get_layers(service):
