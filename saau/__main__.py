@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
 
 
-STATS_DATA = 'd:\\stats_data'
+STATS_DATA = 'c:\\stats_data'
 CACHE = join(STATS_DATA, 'cache')
 OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
