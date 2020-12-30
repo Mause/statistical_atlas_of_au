@@ -10,7 +10,7 @@ from saau.loading import load_image_providers, load_service_providers
 from urllib.response import addinfourl
 from typing import Dict
 
-from pytest import fixture
+from pytest import fixture, xfail
 
 
 @fixture
@@ -52,6 +52,7 @@ def url(bit: str) -> str:
     return url
 
 
+@xfail('missing library')
 def test_roads(services, snapshot, monkeypatch):
     layers = [
         (12, "Major_Road_Network"),
