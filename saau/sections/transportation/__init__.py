@@ -1,5 +1,6 @@
 import os
 import json
+from typing import List
 
 import cartopy.crs as ccrs
 import shapely.geometry as sgeom
@@ -32,6 +33,8 @@ def build_from_paths(services, paths):
 
 
 class TransportationImageProvider(ImageProvider):
+    path: str
+    layers: List[str]
 
     def __init__(self, data_dir, services):
         super().__init__(data_dir, services)
