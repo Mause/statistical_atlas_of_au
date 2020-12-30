@@ -52,8 +52,9 @@ def url(bit: str) -> str:
     return url
 
 
-@xfail('missing library')  # type: ignore
 def test_roads(services, snapshot, monkeypatch):
+    xfail('missing library')
+
     layers = [
         (12, "Major_Road_Network"),
         (15, "All_Roads"),
