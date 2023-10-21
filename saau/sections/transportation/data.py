@@ -2,17 +2,8 @@ from operator import itemgetter
 from itertools import chain
 from typing import List
 
-import cgi
-from urllib.parse import parse_qs
-
-from ...utils.py3_hook import with_hook
-
-with with_hook():
-    from arcrest import Catalog
+from arcrest import Catalog
 import numpy as np
-
-
-cgi.parse_qs = parse_qs  # type: ignore
 
 
 def get_layers(service):
