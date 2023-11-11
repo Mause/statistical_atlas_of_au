@@ -10,12 +10,14 @@ from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
 from bdb import BdbQuit
 
+import pandasdmx
 
 STATS_DATA = 'c:\\stats_data'
 CACHE = join(STATS_DATA, 'cache')
 OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
 coloredlogs.install(level='DEBUG')
+coloredlogs.install(logger=pandasdmx.logger, level='DEBUG')
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .services import Services
