@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "statistical-atlas-of-au"
+version = "0.1.0"
+authors = ["Elliana May <me@mause.me>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "statistical_atlas_of_au"}]
+description = 'Statistical Atlas of Australia'
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+requests = "*"
+betamax = "*"
+cartopy = "*"
+matplotlib = "*"
+pandas = "~1.5.0"
+seaborn = "*"
+humanize = "*"
+lxml = "*"
+dill = "*"
+tqdm = "*"
+rasterio = "*"
+gn-arcrest = "*"
+cython = "*"
+numpy = "*"
+coloredlogs = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
