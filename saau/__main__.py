@@ -8,6 +8,7 @@ import coloredlogs
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
+from bdb import BdbQuit
 
 
 STATS_DATA = 'c:\\stats_data'
@@ -53,6 +54,8 @@ def ensure_data(prov):
         logging.info('Obtaining data for %s', get_name(prov))
         try:
             val = prov.obtain_data()
+        except BdbQuit:
+            raise
         except Exception as e:
             logging.exception(e)
             return False
@@ -160,6 +163,9 @@ def build_image(prov, rerender_all):
             logging.info('Render successful')
         else:
             logging.info('Render unsuccessful')
+
+    except BdbQuit:
+        raise
 
     except NotImplementedError:
         logging.exception("Can't render %s", get_name(prov))
