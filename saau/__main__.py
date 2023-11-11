@@ -4,6 +4,7 @@ import types
 import logging
 import warnings
 import argparse
+import coloredlogs
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
@@ -13,7 +14,7 @@ STATS_DATA = 'c:\\stats_data'
 CACHE = join(STATS_DATA, 'cache')
 OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
-logging.basicConfig(level=logging.DEBUG)
+coloredlogs.install(level='DEBUG')
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .services import Services
