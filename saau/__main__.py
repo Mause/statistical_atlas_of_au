@@ -57,7 +57,7 @@ def ensure_data(prov):
         except BdbQuit:
             raise
         except Exception as e:
-            logging.exception(e)
+            logging.exception('failed to obtain data')
             return False
 
         if val not in {True, False}:
@@ -175,6 +175,9 @@ def build_image(prov, rerender_all):
             "Can't render %s; couldn't access required data",
             get_name(prov)
         )
+
+    except Exception:
+        logging.exception("failed to render image")
 
     del prov  # force cleanup
 
