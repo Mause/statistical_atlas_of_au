@@ -25,8 +25,7 @@ gn-arcrest = "*"
 cython = "*"
 numpy = "*"
 coloredlogs = "*"
-pandasdmx = "^1.10.0"
-requests-cache = "^1.1.0"
+pandasdmx = { git = "https://github.com/Mause/pandaSDMX", branch = "range-period", extras = ["cache"] }
 
 [tool.poetry.group.dev.dependencies]
 pdbpp = "^0.10.3"

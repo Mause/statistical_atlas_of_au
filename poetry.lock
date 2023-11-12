@@ -968,27 +968,32 @@ pytz = ">=2020.1"
 test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 
 [[package]]
-name = "pandasdmx"
+name = "pandaSDMX"
 version = "1.10.0"
 description = "Statistical Data and Metadata eXchange (SDMX) for the Python data ecosystem"
 optional = false
 python-versions = ">=3.9.6,<3.12"
-files = [
-    {file = "pandaSDMX-1.10.0.tar.gz", hash = "sha256:c51145383970c6e0cbef959f09503d8d2af8d1a2c482226b508c29015c045e83"},
-    {file = "pandasdmx-1.10.0-py3-none-any.whl", hash = "sha256:9732f4894b69c2a943abdc85ddd67e1cd1dfe4869f7e460cd35d9ada5d407414"},
-]
+files = []
+develop = false
 
 [package.dependencies]
-lxml = ">=4.1"
-pandas = ">=1.2"
+lxml = ">=4.8"
+pandas = ">=1.3"
 pydantic = ">=1.9.2,<2.0"
-requests = ">=2.15"
+requests = ">=2.26"
+requests_cache = {version = ">=0.9.5", optional = true, markers = "extra == \"cache\""}
 
 [package.extras]
-cache = ["requests_cache"]
-doc = ["IPython", "sphinx (>=2.3)"]
+cache = ["requests_cache (>=0.9.5)"]
+doc = ["IPython (>=7.20)", "sphinx (>=5.2)"]
 schema = ["appdirs (>=1.4)"]
 test = ["pytest (>=5)", "requests-mock (>=1.4)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/Mause/pandaSDMX"
+reference = "range-period"
+resolved_reference = "6701c0a9b04a58269d0c9c128b27dcb8193d2c8b"
 
 [[package]]
 name = "pdbpp"
@@ -1583,4 +1588,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "a1f48dc72b8179072c252ad1add6f7ae057641906553c3f2ec2320f38ef55ed6"
+content-hash = "55516d3076dc4e69347ef0503aadee2af02a38b24dffcc9eea6ef661af9aed75"
