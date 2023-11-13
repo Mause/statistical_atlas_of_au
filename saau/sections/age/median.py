@@ -21,25 +21,13 @@ class MedianAgeImageProvider(ImageProvider):
     def obtain_data(self):
         data = get_generic_data(
             DATASETID,
-            and_=[
-                'FREQUENCY.A',
-                'REGIONTYPE.SA2',
-                'MEASURE.MAGE'
-            ],
-            or_=[
-                'STATE.0',
-                'STATE.1',
-                'STATE.2',
-                'STATE.3',
-                'STATE.4',
-                'STATE.5',
-                'STATE.6',
-                'STATE.7',
-                'STATE.8',
-                'STATE.9'
-            ]
+            and_={
+                'FREQUENCY':'A',
+                'REGIONTYPE':'SA2',
+                'MEASURE':'MAGE',
+                'STATE': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+            }
         )
-        assert data['series']
 
         return self.save_json(FILENAME, data)
 
@@ -49,7 +37,7 @@ class MedianAgeImageProvider(ImageProvider):
     def build_image(self):
         colors = get_cmap('Purples')
 
-        age_data = abs_data_to_dataframe(self.load_json(FILENAME))
+        age_data = abs_data_to_dataframe(self.data_dir_join(FILENAME))
         age_data = [
             (
                 self.region_lookup(data_point.REGION),

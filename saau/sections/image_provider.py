@@ -48,8 +48,13 @@ class RequiresData(ABC):
         return join(self.data_dir, name)
 
     def save_json(self, name: PathOrStr, data: Any) -> bool:
-        with open(self.data_dir_join(name), 'w') as fh:
-            json.dump(data, fh, indent=4)
+        import pandas as pd
+
+        if isinstance(data, (pd.DataFrame, pd.Series)):
+            data.to_json(self.data_dir_join(name))
+        else:
+            with open(self.data_dir_join(name), 'w') as fh:
+                json.dump(data, fh, indent=4)
         return True
 
     def load_json(self, name: PathOrStr) -> Any:
