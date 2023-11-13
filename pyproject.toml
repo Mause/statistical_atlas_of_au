@@ -26,6 +26,7 @@ cython = "*"
 numpy = "*"
 coloredlogs = "*"
 pandasdmx = { git = "https://github.com/Mause/pandaSDMX", branch = "range-period", extras = ["cache"] }
+fastparquet = "^2023.10.1"
 
 [tool.poetry.group.dev.dependencies]
 pdbpp = "^0.10.3"
