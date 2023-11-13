@@ -14,8 +14,7 @@ filename = 'ABS_ANNUAL_ERP_LGA2014.json'
 
 
 def get_data(data_dir):
-    with open(join(data_dir, filename)) as fh:
-        return abs_data_to_dataframe(json.load(fh))
+    return abs_data_to_dataframe(join(data_dir, filename))
 
 
 def main(services, data_dir):

@@ -4,16 +4,20 @@ import types
 import logging
 import warnings
 import argparse
+import coloredlogs
 from operator import itemgetter
 from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 from os.path import join, dirname, exists, expanduser
+from bdb import BdbQuit
 
+import pandasdmx
 
 STATS_DATA = 'c:\\stats_data'
 CACHE = join(STATS_DATA, 'cache')
 OUTPUT = join(STATS_DATA, 'output')
 HERE = dirname(__file__)
-logging.basicConfig(level=logging.DEBUG)
+coloredlogs.install(level='DEBUG')
+coloredlogs.install(logger=pandasdmx.logger, level='DEBUG')
 sys.path.insert(0, expanduser('~/Dropbox/temp/arcrest'))
 
 from .services import Services
@@ -52,8 +56,10 @@ def ensure_data(prov):
         logging.info('Obtaining data for %s', get_name(prov))
         try:
             val = prov.obtain_data()
+        except BdbQuit:
+            raise
         except Exception as e:
-            logging.exception(e)
+            logging.exception('failed to obtain data')
             return False
 
         if val not in {True, False}:
@@ -160,6 +166,9 @@ def build_image(prov, rerender_all):
         else:
             logging.info('Render unsuccessful')
 
+    except BdbQuit:
+        raise
+
     except NotImplementedError:
         logging.exception("Can't render %s", get_name(prov))
 
@@ -168,6 +177,9 @@ def build_image(prov, rerender_all):
             "Can't render %s; couldn't access required data",
             get_name(prov)
         )
+
+    except Exception:
+        logging.exception("failed to render image")
 
     del prov  # force cleanup
 

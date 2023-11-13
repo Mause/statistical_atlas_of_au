@@ -76,10 +76,7 @@ class AncestryImageProvider(ImageProvider):
         return self.save_json(self.filename, get_data(self.ancestry_name))
 
     def build_image(self):
-        data = abs_data_to_dataframe(
-            self.load_json(self.filename),
-            ['ANCP', 'FREQUENCY']
-        )
+        data = abs_data_to_dataframe(self.data_dir_join(self.filename))
         data = data[data.pop('Time') == 2011]
         del data['REGIONTYPE']
 

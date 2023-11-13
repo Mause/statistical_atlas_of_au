@@ -28,7 +28,7 @@ jobs:
       - name: Preinstall
         run: |
           pipenv run pip install cython numpy
-          sudo apt install libopenblas-dev libgdal-dev
+          sudo apt install libopenblas-dev libgdal-dev libproj-dev
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
@@ -52,6 +52,8 @@ jobs:
       - name: Import saau
         run: |
           pipenv run python -c "import saau; print(saau)"
+      - name: Run saau
+        run: pipenv run python -m saau
       # - name: Archive test report
       #   uses: actions/upload-artifact@v1
       #   if: always()

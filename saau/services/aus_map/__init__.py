@@ -10,7 +10,7 @@ from ...utils.shape import shape_from_zip
 from ...sections.image_provider import RequiresData
 from ...utils.download import get_binary
 
-name = lambda q: q.attributes['NAME_1']
+name = lambda q: q.attributes['Name']
 DummyRecord = namedtuple('DummyRecord', 'attributes,geometry')
 LL = namedtuple('LL', 'lat,lon')
 
@@ -18,8 +18,7 @@ AUS_NW = LL(111.5, -1)
 AUS_SE = LL(155, -42)
 YELLOWED_PAPER = '#F1E4BB'
 
-"http://www.gadm.org/download"
-URL = 'http://biogeo.ucdavis.edu/data/gadm2.8/shp/AUS_adm_shp.zip'
+URL = 'https://www.geoboundaries.org/data/1_3_3/zip/shapefile/AUS/AUS_ADM1.shp.zip'
 FILENAME = basename(URL)
 
 
@@ -35,15 +34,17 @@ def get_states(services):
 
     shpfile = shape_from_zip(
         services.aus_map.data_dir_join(FILENAME),
-        "AUS_adm1"
+        'AUS_ADM1',
     )
 
     val = list(shpfile.records())
 
+    try_simplify = lambda a: a.simplify(0.5) if hasattr(a, 'simplify') else a
+
     val = [
         DummyRecord(
             rec.attributes,
-            rec.geometry.simplify(0.5)
+            try_simplify(rec.geometry)
         )
         for rec in val
     ]
@@ -73,7 +74,7 @@ def get_map(services, show_world=False, zorder=0):
     # ax.background_patch.set_visible(False)
     # ax.outline_patch.set_visible(False)
 
-    ax.background_patch.set_facecolor(YELLOWED_PAPER)
+    # ax.background_patch.set_facecolor(YELLOWED_PAPER)
     ax.patch.set_facecolor(YELLOWED_PAPER)
     ax.set_facecolor(YELLOWED_PAPER)
 

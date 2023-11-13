@@ -49,7 +49,7 @@ class MaleVSFemaleImageProvider(ImageProvider):
         return self.save_json(FILENAME, data)
 
     def load_data(self):
-        df = abs_data_to_dataframe(self.load_json(FILENAME))
+        df = abs_data_to_dataframe(self.data_dir_join(FILENAME))
 
         df.SEX_ABS = (
             df.SEX_ABS

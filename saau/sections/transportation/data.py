@@ -1,21 +1,17 @@
 from operator import itemgetter
 from itertools import chain
 from typing import List
+from functools import cache
 
-import cgi
-from urllib.parse import parse_qs
-
-from ...utils.py3_hook import with_hook
-
-with with_hook():
-    from arcrest import Catalog
+from arcrest import Catalog
 import numpy as np
+from tqdm import tqdm
 
 
-cgi.parse_qs = parse_qs  # type: ignore
-
-
-def get_layers(service):
+@cache
+def get_layers():
+    catalog = Catalog('http://services.ga.gov.au/site_7/rest/services')
+    service = catalog['NM_Transport_Infrastructure']
     layers = service.layers
     return {
         layer.name: layer
@@ -29,13 +25,10 @@ def mend_extent(extent):
 
 
 def get_data(requested_layers: List[str]):
-    catalog = Catalog('http://services.ga.gov.au/site_7/rest/services')
-    service = catalog['NM_Transport_Infrastructure']
-    layers = get_layers(service)
-
+    layers = get_layers()
     return chain.from_iterable(
         layers[layer].QueryLayer(Geometry=mend_extent(layers[layer].extent))
-        for layer in requested_layers
+        for layer in tqdm(requested_layers, desc='Fetching requested layers')
     )
 
 
@@ -48,10 +41,12 @@ def get_paths(request_layers: List[str]) -> np.array:
         if hasattr(geometry, 'paths')
     )
 
-    return np.array([
+    result = [
         tuple(
             (part.x, part.y)
             for part in path
         )
         for path in paths
-    ])
+    ]
+
+    return result # np.array(result)
