@@ -22,6 +22,7 @@ def get_binary(url, filename):
         )
 
     r = requests.get(url, stream=True)
+    r.raise_for_status()
 
     with open(filename, 'wb') as fh:
         copyfileobj(
