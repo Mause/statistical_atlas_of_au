@@ -45,7 +45,7 @@ class TransportationImageProvider(ImageProvider):
         assert hasattr(self, 'layers')
         return self.save_json(
             self.path,
-            get_paths(self.layers).tolist()
+            get_paths(self.layers)
         )
 
     def has_required_data(self):
